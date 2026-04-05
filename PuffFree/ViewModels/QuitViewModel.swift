@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftData
 import Combine
 
-@Observable
+@Observable @MainActor
 final class QuitViewModel {
     var timeComponents: (days: Int, hours: Int, minutes: Int, seconds: Int) = (0, 0, 0, 0)
     var moneySaved: Double = 0
@@ -19,10 +19,8 @@ final class QuitViewModel {
     func startTracking(profile: UserProfile) {
         self.profile = profile
         updateStats()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                self?.updateStats()
-            }
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.updateStats()
         }
     }
 
