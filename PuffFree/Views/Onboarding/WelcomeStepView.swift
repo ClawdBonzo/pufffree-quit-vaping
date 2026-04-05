@@ -11,10 +11,12 @@ struct WelcomeStepView: View {
             Spacer()
 
             VStack(spacing: 16) {
-                Image(systemName: "lungs.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(PuffFreeTheme.primaryGradient)
-                    .scaleEffect(animateIn ? 1 : 0.5)
+                Image("OnboardingWelcome")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .scaleEffect(animateIn ? 1 : 0.85)
                     .opacity(animateIn ? 1 : 0)
 
                 Text("PuffFree")

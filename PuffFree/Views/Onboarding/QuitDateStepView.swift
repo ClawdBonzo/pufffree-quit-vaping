@@ -9,9 +9,11 @@ struct QuitDateStepView: View {
             Spacer()
 
             VStack(spacing: 8) {
-                Image(systemName: "calendar.badge.clock")
-                    .font(.system(size: 50))
-                    .foregroundStyle(PuffFreeTheme.primaryGradient)
+                Image("OnboardingQuitDate")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 140)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
 
                 Text("When did you quit?")
                     .font(.system(size: 28, weight: .bold, design: .rounded))

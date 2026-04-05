@@ -11,10 +11,12 @@ struct NotificationStepView: View {
             Spacer()
 
             VStack(spacing: 16) {
-                Image(systemName: "bell.badge.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(PuffFreeTheme.primaryGradient)
-                    .scaleEffect(animateIn ? 1 : 0.5)
+                Image("OnboardingAnalyzing")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 160)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .scaleEffect(animateIn ? 1 : 0.9)
 
                 Text("Stay Motivated")
                     .font(.system(size: 28, weight: .bold, design: .rounded))

@@ -40,6 +40,16 @@ struct MainTabView: View {
             case .settings: return "gearshape.fill"
             }
         }
+
+        var customIcon: String {
+            switch self {
+            case .dashboard: return "TabDashboard"
+            case .health: return "TabProgress"
+            case .cravings: return "TabLogger"
+            case .journal: return "TabCoach"
+            case .settings: return "TabSettings"
+            }
+        }
     }
 
     var body: some View {

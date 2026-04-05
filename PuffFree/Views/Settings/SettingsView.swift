@@ -16,9 +16,11 @@ struct SettingsView: View {
                 if let profile {
                     Section {
                         HStack(spacing: 14) {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 44))
-                                .foregroundStyle(PuffFreeTheme.primaryGradient)
+                            Image("OnboardingWelcome")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 48, height: 48)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(profile.displayName.isEmpty ? "Quitter" : profile.displayName)
