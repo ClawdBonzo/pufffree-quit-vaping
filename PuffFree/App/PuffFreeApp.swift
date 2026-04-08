@@ -1,9 +1,15 @@
 import SwiftUI
 import SwiftData
+import RevenueCat
 
 @main
 struct PuffFreeApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
+    init() {
+        // TODO: Replace with live key before App Store release
+        Purchases.configure(withAPIKey: AppConstants.RevenueCat.apiKey)
+    }
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([

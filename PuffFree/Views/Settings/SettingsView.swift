@@ -6,6 +6,10 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showEditProfile = false
     @State private var showResetAlert = false
+    @State private var showPaywall = false
+    @State private var showRestoreAlert = false
+    @State private var restoreMessage = ""
+    @State private var isRestoring = false
 
     private var profile: UserProfile? { profiles.first }
 
@@ -68,6 +72,39 @@ struct SettingsView: View {
                         Label("Savings Tracker", systemImage: "dollarsign.circle.fill")
                     }
                     .foregroundColor(.white)
+
+                    Button {
+                        showPaywall = true
+                    } label: {
+                        Label("Manage Subscription", systemImage: "crown.fill")
+                    }
+                    .foregroundColor(.white)
+
+                    Button {
+                        isRestoring = true
+                        Task {
+                            defer { isRestoring = false }
+                            do {
+                                let isPro = try await RevenueCatManager.shared.restorePurchases()
+                                restoreMessage = isPro
+                                    ? "Purchases restored successfully!"
+                                    : "No active subscription found."
+                            } catch {
+                                restoreMessage = error.localizedDescription
+                            }
+                            showRestoreAlert = true
+                        }
+                    } label: {
+                        if isRestoring {
+                            HStack {
+                                ProgressView().tint(PuffFreeTheme.accentTeal)
+                                Text("Restoring…").foregroundColor(PuffFreeTheme.textSecondary)
+                            }
+                        } else {
+                            Label("Restore Purchases", systemImage: "arrow.counterclockwise")
+                        }
+                    }
+                    .foregroundColor(.white)
                 }
                 .listRowBackground(PuffFreeTheme.backgroundCard)
 
@@ -126,6 +163,14 @@ struct SettingsView: View {
                         .presentationDetents([.large])
                         .presentationDragIndicator(.visible)
                 }
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView(onDismiss: { showPaywall = false })
+            }
+            .alert("Restore Purchases", isPresented: $showRestoreAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(restoreMessage)
             }
             .alert("Reset All Data?", isPresented: $showResetAlert) {
                 Button("Cancel", role: .cancel) {}

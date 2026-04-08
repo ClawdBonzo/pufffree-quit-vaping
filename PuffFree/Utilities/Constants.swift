@@ -6,6 +6,18 @@ enum AppConstants {
     static let appGroupIdentifier = "group.com.pufffree.app"
     static let widgetKind = "PuffFreeWidget"
 
+    enum RevenueCat {
+        // TODO: Replace with live key before App Store release
+        static let apiKey = "test_xtLbSChuPPurZcNcOUnPWyuFuQb"
+        static let entitlement = "pro"
+        enum ProductID {
+            static let weekly   = "com.clawdbonzo.PuffFree.pro.weekly"
+            static let monthly  = "com.clawdbonzo.PuffFree.pro.monthly"
+            static let yearly   = "com.clawdbonzo.PuffFree.pro.yearly"
+            static let lifetime = "com.clawdbonzo.PuffFree.pro.lifetime"
+        }
+    }
+
     enum UserDefaults {
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
         static let quitDateKey = "quitDate"

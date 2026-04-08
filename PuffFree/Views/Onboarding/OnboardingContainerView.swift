@@ -17,7 +17,7 @@ struct OnboardingContainerView: View {
     @State private var additionalMotivations: [String] = []
     @State private var notificationsEnabled = true
 
-    private let totalSteps = 6
+    private let totalSteps = 7
 
     var body: some View {
         ZStack {
@@ -69,9 +69,12 @@ struct OnboardingContainerView: View {
 
                     NotificationStepView(
                         notificationsEnabled: $notificationsEnabled,
-                        onComplete: { completeOnboarding() }
+                        onComplete: { nextStep() }
                     )
                     .tag(5)
+
+                    PaywallStepView(onComplete: { completeOnboarding() })
+                    .tag(6)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut(duration: 0.3), value: currentStep)
