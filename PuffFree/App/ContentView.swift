@@ -27,6 +27,7 @@ struct MainTabView: View {
     enum TabItem: String, CaseIterable {
         case dashboard = "Dashboard"
         case health = "Health"
+        case gamification = "Achievements"
         case cravings = "Cravings"
         case journal = "Journal"
         case settings = "Settings"
@@ -35,6 +36,7 @@ struct MainTabView: View {
             switch self {
             case .dashboard: return "lungs.fill"
             case .health: return "heart.fill"
+            case .gamification: return "star.fill"
             case .cravings: return "flame.fill"
             case .journal: return "book.fill"
             case .settings: return "gearshape.fill"
@@ -45,6 +47,7 @@ struct MainTabView: View {
             switch self {
             case .dashboard: return "TabDashboard"
             case .health: return "TabProgress"
+            case .gamification: return "TabAchievements"
             case .cravings: return "TabLogger"
             case .journal: return "TabCoach"
             case .settings: return "TabSettings"
@@ -60,6 +63,9 @@ struct MainTabView: View {
 
                 HealthTimelineView()
                     .tag(TabItem.health)
+
+                GamificationView()
+                    .tag(TabItem.gamification)
 
                 CravingTrackerView()
                     .tag(TabItem.cravings)

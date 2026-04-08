@@ -5,47 +5,119 @@ struct DashboardView: View {
     @Query private var profiles: [UserProfile]
     @Query(sort: \MilestoneRecord.unlockedAt) private var milestones: [MilestoneRecord]
     @State private var viewModel = QuitViewModel()
+    @State private var gamificationViewModel: GamificationViewModel?
     @State private var showCelebration = false
     @State private var celebratingMilestone: MilestoneType?
+    @State private var activeCelebration: CelebrationOverlayType?
     @Environment(\.modelContext) private var modelContext
 
     private var profile: UserProfile? { profiles.first }
 
+    enum CelebrationOverlayType {
+        case levelUp(PlayerLevel)
+        case badgeUnlock(Badge)
+        case streakMilestone(Int)
+        case questCompletion(Quest, Int)
+    }
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Timer Card
-                    TimerCardView(viewModel: viewModel)
-                        .padding(.horizontal, 16)
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Timer Card
+                        TimerCardView(viewModel: viewModel)
+                            .padding(.horizontal, 16)
 
-                    // Quick Stats
-                    QuickStatsView(viewModel: viewModel)
-                        .padding(.horizontal, 16)
+                        // Quick Stats
+                        QuickStatsView(viewModel: viewModel)
+                            .padding(.horizontal, 16)
 
-                    // Next Milestone
-                    if let next = viewModel.nextMilestone {
-                        NextMilestoneCard(
-                            milestone: next,
-                            progress: viewModel.progressToNextMilestone
-                        )
-                        .padding(.horizontal, 16)
+                        // Gamification Level Card
+                        if let gamVM = gamificationViewModel, let state = gamVM.gamificationState {
+                            LevelCardView(state: state)
+                                .padding(.horizontal, 16)
+                        }
+
+                        // Active Quests Preview
+                        if let gamVM = gamificationViewModel {
+                            let activeQuests = gamVM.getActiveQuests()
+                            if !activeQuests.isEmpty {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack {
+                                        Text("Today's Quests")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                        Spacer()
+                                        let completed = gamVM.getCompletedQuests().count
+                                        Text("\(completed)/\(completed + activeQuests.count)")
+                                            .font(.caption)
+                                            .foregroundColor(PuffFreeTheme.accentTeal)
+                                    }
+                                    .padding(.horizontal, 20)
+
+                                    VStack(spacing: 8) {
+                                        ForEach(activeQuests.prefix(3), id: \.id) { quest in
+                                            QuestPreviewRow(quest: quest)
+                                        }
+                                    }
+                                    .padding(.horizontal, 20)
+                                }
+                                .padding(.vertical, 16)
+                                .background(PuffFreeTheme.backgroundCard)
+                                .cornerRadius(12)
+                                .padding(.horizontal, 16)
+                            }
+                        }
+
+                        // Next Milestone
+                        if let next = viewModel.nextMilestone {
+                            NextMilestoneCard(
+                                milestone: next,
+                                progress: viewModel.progressToNextMilestone
+                            )
+                            .padding(.horizontal, 16)
+                        }
+
+                        // Motivation
+                        MotivationCardView()
+                            .padding(.horizontal, 16)
+
+                        // Savings highlight
+                        SavingsHighlightCard(moneySaved: viewModel.moneySaved)
+                            .padding(.horizontal, 16)
+
+                        Spacer().frame(height: 80)
                     }
-
-                    // Motivation
-                    MotivationCardView()
-                        .padding(.horizontal, 16)
-
-                    // Savings highlight
-                    SavingsHighlightCard(moneySaved: viewModel.moneySaved)
-                        .padding(.horizontal, 16)
-
-                    Spacer().frame(height: 80)
+                    .padding(.top, 8)
                 }
-                .padding(.top, 8)
+                .scrollIndicators(.hidden)
+                .background(PuffFreeTheme.backgroundPrimary)
+
+                // Celebration Overlays
+                if let celebration = activeCelebration {
+                    ZStack {
+                        switch celebration {
+                        case .levelUp(let level):
+                            LevelUpCelebrationView(newLevel: level) {
+                                activeCelebration = nil
+                            }
+                        case .badgeUnlock(let badge):
+                            BadgeUnlockCelebrationView(badge: badge) {
+                                activeCelebration = nil
+                            }
+                        case .streakMilestone(let days):
+                            StreakMilestoneCelebrationView(streakDays: days) {
+                                activeCelebration = nil
+                            }
+                        case .questCompletion(let quest, let xp):
+                            QuestCompletionToastView(quest: quest, xpGained: xp) {
+                                activeCelebration = nil
+                            }
+                        }
+                    }
+                }
             }
-            .scrollIndicators(.hidden)
-            .background(PuffFreeTheme.backgroundPrimary)
             .navigationTitle("PuffFree")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
@@ -54,6 +126,17 @@ struct DashboardView: View {
             if let profile {
                 viewModel.startTracking(profile: profile)
                 checkMilestones()
+
+                // Initialize gamification
+                if gamificationViewModel == nil {
+                    gamificationViewModel = GamificationViewModel(modelContext: modelContext)
+                }
+
+                // Update streak and check for badge unlocks
+                if let gamVM = gamificationViewModel {
+                    gamVM.updateStreak(daysSinceQuit: profile.daysSinceQuit)
+                    gamVM.checkAndUnlockBadges(profile: profile)
+                }
             }
         }
         .onDisappear {
@@ -139,5 +222,66 @@ struct SavingsHighlightCard: View {
                     .foregroundStyle(PuffFreeTheme.savingsGradient)
             }
         }
+    }
+}
+
+struct LevelCardView: View {
+    let state: GamificationState
+
+    var body: some View {
+        GlassCard {
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Current Level")
+                        .font(.caption)
+                        .foregroundColor(PuffFreeTheme.textSecondary)
+                    Text(state.currentLevel.title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Text("\(state.totalXP) XP")
+                        .font(.caption)
+                        .foregroundColor(PuffFreeTheme.accentTeal)
+                }
+
+                Spacer()
+
+                Image(systemName: state.currentLevel.icon)
+                    .font(.system(size: 44))
+                    .foregroundColor(Color(hex: state.currentLevel.color))
+            }
+        }
+    }
+}
+
+struct QuestPreviewRow: View {
+    let quest: Quest
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: quest.type.icon)
+                .font(.system(size: 16))
+                .foregroundColor(PuffFreeTheme.accentTeal)
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(quest.type.rawValue)
+                    .font(.caption)
+                    .foregroundColor(.white)
+                Text(quest.questDescription)
+                    .font(.caption2)
+                    .foregroundColor(PuffFreeTheme.textSecondary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            Text("+\(quest.xpReward) XP")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(PuffFreeTheme.accentTeal)
+        }
+        .padding(8)
+        .background(PuffFreeTheme.backgroundPrimary)
+        .cornerRadius(6)
     }
 }

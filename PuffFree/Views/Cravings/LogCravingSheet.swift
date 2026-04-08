@@ -11,6 +11,9 @@ struct LogCravingSheet: View {
     @State private var selectedCoping: CopingStrategy = .deepBreathing
     @State private var didResist = true
     @State private var notes = ""
+    @State private var gamificationViewModel: GamificationViewModel?
+    @State private var showCelebration = false
+    @State private var celebrationData: (xp: Int, type: String)? = nil
 
     var body: some View {
         NavigationStack {
@@ -192,6 +195,28 @@ struct LogCravingSheet: View {
 
         if didResist, let profile = profiles.first {
             profile.totalCravingsResisted += 1
+
+            // Initialize gamification if needed
+            if gamificationViewModel == nil {
+                gamificationViewModel = GamificationViewModel(modelContext: modelContext)
+            }
+
+            // Award XP for resisting craving
+            if let gamVM = gamificationViewModel {
+                let xpAmount = Int(intensity) * 10 // Higher intensity = more XP
+                gamVM.addXP(xpAmount, source: "resistCraving")
+
+                // Update quest progress for craving resistance
+                for quest in gamVM.quests {
+                    if quest.type == .resistCravings && !quest.isCompleted {
+                        quest.progress += 1
+                        if quest.progress >= quest.targetProgress {
+                            quest.isCompleted = true
+                            quest.completedDate = Date()
+                        }
+                    }
+                }
+            }
         }
 
         HapticManager.notification(didResist ? .success : .warning)

@@ -10,6 +10,7 @@ struct JournalEntrySheet: View {
     @State private var selectedMood: Mood = .neutral
     @State private var tagInput = ""
     @State private var tags: [String] = []
+    @State private var gamificationViewModel: GamificationViewModel?
 
     var body: some View {
         NavigationStack {
@@ -166,6 +167,28 @@ struct JournalEntrySheet: View {
             tags: tags
         )
         modelContext.insert(entry)
+
+        // Integrate gamification - award XP for journaling
+        if gamificationViewModel == nil {
+            gamificationViewModel = GamificationViewModel(modelContext: modelContext)
+        }
+
+        if let gamVM = gamificationViewModel {
+            let xpAmount = 50 + (tags.count * 10) // Extra XP for tagging
+            gamVM.addXP(xpAmount, source: "journalEntry")
+
+            // Update quest progress for journal entries
+            for quest in gamVM.quests {
+                if quest.type == .journalEntry && !quest.isCompleted {
+                    quest.progress += 1
+                    if quest.progress >= quest.targetProgress {
+                        quest.isCompleted = true
+                        quest.completedDate = Date()
+                    }
+                }
+            }
+        }
+
         HapticManager.notification(.success)
         dismiss()
     }
