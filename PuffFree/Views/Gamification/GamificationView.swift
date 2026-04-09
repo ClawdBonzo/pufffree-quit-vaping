@@ -24,7 +24,7 @@ struct GamificationView: View {
 
             // Quick Stats
             if let state = viewModel?.gamificationState {
-                QuickStatsView(state: state)
+                GamQuickStatsView(state: state)
             }
 
             // Badges Button
@@ -259,7 +259,7 @@ struct XPProgressView: View {
 
 // MARK: - Quick Stats
 
-struct QuickStatsView: View {
+struct GamQuickStatsView: View {
     let state: GamificationState
 
     var body: some View {

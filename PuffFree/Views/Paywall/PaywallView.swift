@@ -6,96 +6,107 @@ struct PaywallView: View {
     @State private var selectedPackage: Package? = nil
     @State private var showRestoreAlert = false
     @State private var restoreMessage = ""
+    @State private var glowPulse = false
 
     var onDismiss: (() -> Void)?
 
     var body: some View {
-        ZStack {
-            PuffFreeTheme.backgroundPrimary.ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack {
+                // Background gradient
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.05, green: 0.12, blue: 0.08),
+                        PuffFreeTheme.backgroundPrimary,
+                        Color(red: 0.02, green: 0.08, blue: 0.12)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-            ScrollView {
                 VStack(spacing: 0) {
-                    // Header
+                    // — Hero icon + dismiss
                     ZStack(alignment: .topTrailing) {
-                        Image("OnboardingPaywall")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 260)
-                            .clipped()
-                            .overlay(
-                                LinearGradient(
-                                    colors: [.clear, PuffFreeTheme.backgroundPrimary],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                        VStack(spacing: 6) {
+                            ZStack {
+                                Circle()
+                                    .fill(PuffFreeTheme.accentTeal.opacity(0.15))
+                                    .frame(width: 80, height: 80)
+                                    .scaleEffect(glowPulse ? 1.15 : 1.0)
+                                    .animation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true), value: glowPulse)
+
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 36))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [PuffFreeTheme.accentTeal, Color(hex: "FFD700")],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                            }
+
+                            Text("Go Pro")
+                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+
+                            Text("Start your 3-day free trial · Cancel anytime")
+                                .font(.caption)
+                                .foregroundColor(PuffFreeTheme.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, geo.safeAreaInsets.top + 12)
 
                         if onDismiss != nil {
-                            Button {
-                                onDismiss?()
-                            } label: {
+                            Button { onDismiss?() } label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .font(.title2)
-                                    .foregroundStyle(.white.opacity(0.7))
-                                    .padding()
+                                    .font(.title3)
+                                    .foregroundStyle(.white.opacity(0.5))
                             }
+                            .padding(.trailing, 20)
+                            .padding(.top, geo.safeAreaInsets.top + 12)
                         }
                     }
 
+                    // — Features (compact horizontal rows)
                     VStack(spacing: 8) {
-                        Text("Go Pro")
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-
-                        Text("Start your 3-day free trial.\nCancel anytime.")
-                            .font(.subheadline)
-                            .foregroundColor(PuffFreeTheme.textSecondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.top, 8)
-                    .padding(.horizontal, 24)
-
-                    // Feature highlights
-                    VStack(spacing: 12) {
                         PaywallFeatureRow(icon: "chart.line.uptrend.xyaxis", text: "Advanced health & savings analytics")
-                        PaywallFeatureRow(icon: "brain.head.profile", text: "AI-powered craving insights")
-                        PaywallFeatureRow(icon: "bell.badge.fill", text: "Smart milestone celebrations")
-                        PaywallFeatureRow(icon: "lock.open.fill", text: "Unlock all app features, forever")
+                        PaywallFeatureRow(icon: "brain.head.profile",        text: "AI-powered craving insights")
+                        PaywallFeatureRow(icon: "bell.badge.fill",           text: "Smart milestone celebrations")
+                        PaywallFeatureRow(icon: "lock.open.fill",            text: "Unlock all features, forever")
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 20)
+                    .padding(.top, 16)
 
-                    // Packages
-                    if viewModel.isLoading && viewModel.currentOfferings == nil {
-                        ProgressView()
-                            .tint(PuffFreeTheme.accentTeal)
-                            .padding(.vertical, 40)
-                    } else if let offering = viewModel.currentOfferings?.current {
-                        VStack(spacing: 10) {
+                    // — Packages
+                    VStack(spacing: 8) {
+                        if viewModel.isLoading && viewModel.currentOfferings == nil {
+                            ProgressView()
+                                .tint(PuffFreeTheme.accentTeal)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 20)
+                        } else if let offering = viewModel.currentOfferings?.current {
                             ForEach(orderedPackages(from: offering), id: \.identifier) { package in
                                 PaywallPackageCard(
                                     package: package,
                                     isSelected: selectedPackage?.identifier == package.identifier,
-                                    onTap: { selectedPackage = package }
+                                    onTap: { withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedPackage = package } }
                                 )
                             }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 20)
-                    } else {
-                        // Fallback skeleton when no offerings loaded
-                        VStack(spacing: 10) {
+                        } else {
                             ForEach(fallbackPlans, id: \.title) { plan in
                                 PaywallFallbackCard(plan: plan)
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 20)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 14)
 
-                    // CTA
-                    VStack(spacing: 14) {
+                    Spacer(minLength: 0)
+
+                    // — CTA stack (pinned to bottom)
+                    VStack(spacing: 10) {
                         Button {
                             Task {
                                 if let pkg = selectedPackage {
@@ -116,49 +127,48 @@ struct PaywallView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
+                            .padding(.vertical, 15)
                             .background(PuffFreeTheme.primaryGradient)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                         .disabled(viewModel.isLoading)
 
-                        Button {
-                            Task {
-                                await viewModel.restore()
-                                restoreMessage = viewModel.isPro
-                                    ? "Purchases restored successfully!"
-                                    : "No active subscription found."
-                                showRestoreAlert = true
-                            }
-                        } label: {
-                            Text("Restore Purchases")
-                                .font(.subheadline)
-                                .foregroundColor(PuffFreeTheme.textSecondary)
-                        }
-                        .disabled(viewModel.isLoading)
-
-                        if let onDismiss {
+                        HStack(spacing: 20) {
                             Button {
-                                onDismiss()
+                                Task {
+                                    await viewModel.restore()
+                                    restoreMessage = viewModel.isPro
+                                        ? "Purchases restored successfully!"
+                                        : "No active subscription found."
+                                    showRestoreAlert = true
+                                }
                             } label: {
-                                Text("Maybe Later")
-                                    .font(.caption)
-                                    .foregroundColor(PuffFreeTheme.textTertiary)
+                                Text("Restore")
+                                    .font(.footnote)
+                                    .foregroundColor(PuffFreeTheme.textSecondary)
+                            }
+                            .disabled(viewModel.isLoading)
+
+                            if let onDismiss {
+                                Button { onDismiss() } label: {
+                                    Text("Maybe Later")
+                                        .font(.footnote)
+                                        .foregroundColor(PuffFreeTheme.textTertiary)
+                                }
                             }
                         }
 
-                        Text("Subscriptions auto-renew unless cancelled. See Terms & Privacy.")
-                            .font(.system(size: 10))
+                        Text("Auto-renews unless cancelled. See Terms & Privacy.")
+                            .font(.system(size: 9))
                             .foregroundColor(PuffFreeTheme.textTertiary)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 24)
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 40)
+                    .padding(.bottom, max(geo.safeAreaInsets.bottom, 16) + 4)
                 }
             }
         }
+        .ignoresSafeArea()
         .alert("Restore Purchases", isPresented: $showRestoreAlert) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -174,14 +184,16 @@ struct PaywallView: View {
         }
         .task {
             await viewModel.refresh()
-            // Pre-select monthly (best value)
             if let monthly = viewModel.currentOfferings?.current?.monthly {
                 selectedPackage = monthly
             } else {
                 selectedPackage = viewModel.currentOfferings?.current?.availablePackages.first
             }
         }
+        .onAppear { glowPulse = true }
     }
+
+    // MARK: - Helpers
 
     private var ctaTitle: String {
         guard let pkg = selectedPackage else { return "Start Free Trial" }
@@ -198,13 +210,12 @@ struct PaywallView: View {
         }
     }
 
-    // Shown when RevenueCat offerings haven't loaded (e.g., no internet, first cold launch)
     private var fallbackPlans: [(title: String, price: String, badge: String?, isBest: Bool)] {
         [
-            (title: "Weekly", price: "$4.99 / week", badge: "3-day free trial", isBest: false),
-            (title: "Monthly", price: "$9.99 / month", badge: "3-day free trial", isBest: true),
-            (title: "Yearly", price: "$49.99 / year", badge: "3-day free trial", isBest: false),
-            (title: "Lifetime", price: "$79.99 once", badge: nil, isBest: false)
+            (title: "Weekly",   price: "$4.99/wk",   badge: "3-day free trial", isBest: false),
+            (title: "Monthly",  price: "$9.99/mo",   badge: "3-day free trial", isBest: true),
+            (title: "Yearly",   price: "$49.99/yr",  badge: "3-day free trial", isBest: false),
+            (title: "Lifetime", price: "$79.99 once", badge: nil,               isBest: false)
         ]
     }
 }
@@ -216,14 +227,14 @@ struct PaywallFeatureRow: View {
     let text: String
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.body)
+                .font(.footnote)
                 .foregroundStyle(PuffFreeTheme.primaryGradient)
-                .frame(width: 28)
+                .frame(width: 22)
 
             Text(text)
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundColor(PuffFreeTheme.textSecondary)
 
             Spacer()
@@ -251,50 +262,46 @@ struct PaywallPackageCard: View {
 
     private var priceLabel: String {
         switch package.packageType {
-        case .weekly:   return "\(package.localizedPriceString) / week"
-        case .monthly:  return "\(package.localizedPriceString) / month"
-        case .annual:   return "\(package.localizedPriceString) / year"
-        case .lifetime: return "\(package.localizedPriceString) once"
+        case .weekly:   return "\(package.localizedPriceString)/wk"
+        case .monthly:  return "\(package.localizedPriceString)/mo"
+        case .annual:   return "\(package.localizedPriceString)/yr"
+        case .lifetime: return "\(package.localizedPriceString)"
         default:        return package.localizedPriceString
         }
     }
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 14) {
-                // Selection indicator
+            HStack(spacing: 12) {
                 ZStack {
                     Circle()
                         .stroke(isSelected ? PuffFreeTheme.accentTeal : Color.white.opacity(0.2), lineWidth: 2)
-                        .frame(width: 22, height: 22)
+                        .frame(width: 20, height: 20)
                     if isSelected {
                         Circle()
                             .fill(PuffFreeTheme.accentTeal)
-                            .frame(width: 12, height: 12)
+                            .frame(width: 11, height: 11)
                     }
                 }
 
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
                         Text(title)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
+                            .font(.subheadline).fontWeight(.semibold)
                             .foregroundColor(.white)
-
                         if isBestValue {
-                            Text("BEST VALUE")
-                                .font(.system(size: 9, weight: .bold))
+                            Text("BEST")
+                                .font(.system(size: 8, weight: .bold))
                                 .foregroundColor(.black)
-                                .padding(.horizontal, 6)
+                                .padding(.horizontal, 5)
                                 .padding(.vertical, 2)
                                 .background(PuffFreeTheme.accentTeal)
                                 .clipShape(Capsule())
                         }
                     }
-
                     if !isLifetime {
                         Text("3-day free trial")
-                            .font(.caption)
+                            .font(.caption2)
                             .foregroundColor(PuffFreeTheme.success)
                     }
                 }
@@ -302,25 +309,27 @@ struct PaywallPackageCard: View {
                 Spacer()
 
                 Text(priceLabel)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
+                    .font(.footnote).fontWeight(.medium)
                     .foregroundColor(PuffFreeTheme.textSecondary)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(PuffFreeTheme.backgroundCard)
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected
+                        ? PuffFreeTheme.backgroundCard.opacity(1.4)
+                        : PuffFreeTheme.backgroundCard)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(
                                 isSelected
-                                    ? (isBestValue ? PuffFreeTheme.accentTeal : Color.white.opacity(0.4))
+                                    ? (isBestValue ? PuffFreeTheme.accentTeal : Color.white.opacity(0.35))
                                     : Color.clear,
-                                lineWidth: isBestValue && isSelected ? 2 : 1
+                                lineWidth: isBestValue && isSelected ? 1.5 : 1
                             )
                     )
             )
+            .scaleEffect(isSelected ? 1.01 : 1.0)
         }
         .buttonStyle(.plain)
     }
@@ -330,32 +339,29 @@ struct PaywallFallbackCard: View {
     let plan: (title: String, price: String, badge: String?, isBest: Bool)
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             Circle()
                 .stroke(plan.isBest ? PuffFreeTheme.accentTeal : Color.white.opacity(0.2), lineWidth: 2)
-                .frame(width: 22, height: 22)
+                .frame(width: 20, height: 20)
 
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
                     Text(plan.title)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.subheadline).fontWeight(.semibold)
                         .foregroundColor(.white)
-
                     if plan.isBest {
-                        Text("BEST VALUE")
-                            .font(.system(size: 9, weight: .bold))
+                        Text("BEST")
+                            .font(.system(size: 8, weight: .bold))
                             .foregroundColor(.black)
-                            .padding(.horizontal, 6)
+                            .padding(.horizontal, 5)
                             .padding(.vertical, 2)
                             .background(PuffFreeTheme.accentTeal)
                             .clipShape(Capsule())
                     }
                 }
-
                 if let badge = plan.badge {
                     Text(badge)
-                        .font(.caption)
+                        .font(.caption2)
                         .foregroundColor(PuffFreeTheme.success)
                 }
             }
@@ -363,18 +369,17 @@ struct PaywallFallbackCard: View {
             Spacer()
 
             Text(plan.price)
-                .font(.subheadline)
-                .fontWeight(.medium)
+                .font(.footnote).fontWeight(.medium)
                 .foregroundColor(PuffFreeTheme.textSecondary)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
         .background(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(PuffFreeTheme.backgroundCard)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(plan.isBest ? PuffFreeTheme.accentTeal : Color.clear, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(plan.isBest ? PuffFreeTheme.accentTeal : Color.clear, lineWidth: 1.5)
                 )
         )
     }

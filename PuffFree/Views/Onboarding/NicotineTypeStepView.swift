@@ -4,58 +4,82 @@ struct NicotineTypeStepView: View {
     @Binding var selectedType: NicotineType
     let onNext: () -> Void
 
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    @State private var titleVisible = false
+    @State private var visibleCards: Set<Int> = []
+
+    let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             Spacer()
 
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Text("What do you use?")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-
                 Text("Select your primary nicotine product")
                     .font(.subheadline)
                     .foregroundColor(PuffFreeTheme.textSecondary)
             }
+            .scaleEffect(titleVisible ? 1 : 0.9)
+            .opacity(titleVisible ? 1 : 0)
+            .animation(.spring(response: 0.45, dampingFraction: 0.7), value: titleVisible)
 
             LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(NicotineType.allCases) { type in
+                ForEach(Array(NicotineType.allCases.enumerated()), id: \.element) { idx, type in
+                    let isSelected = selectedType == type
+                    let isVisible  = visibleCards.contains(idx)
+
                     Button {
-                        selectedType = type
+                        withAnimation(.spring(response: 0.32, dampingFraction: 0.6)) {
+                            selectedType = type
+                        }
                         HapticManager.selection()
                     } label: {
                         VStack(spacing: 10) {
                             Image(systemName: type.icon)
                                 .font(.title2)
+                                .scaleEffect(isSelected ? 1.15 : 1.0)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.55), value: isSelected)
                             Text(type.rawValue)
                                 .font(.caption)
+                                .fontWeight(.medium)
                                 .multilineTextAlignment(.center)
                         }
-                        .foregroundColor(selectedType == type ? .black : .white)
+                        .foregroundColor(isSelected ? .black : .white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, 18)
                         .background(
-                            selectedType == type ?
-                            AnyShapeStyle(PuffFreeTheme.primaryGradient) :
-                            AnyShapeStyle(PuffFreeTheme.backgroundCard)
+                            isSelected
+                                ? AnyShapeStyle(PuffFreeTheme.primaryGradient)
+                                : AnyShapeStyle(PuffFreeTheme.backgroundCard)
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 14)
+                            RoundedRectangle(cornerRadius: 16)
                                 .stroke(
-                                    selectedType == type ? Color.clear : Color.white.opacity(0.1),
+                                    isSelected ? Color.clear : Color.white.opacity(0.08),
                                     lineWidth: 1
                                 )
                         )
+                        .shadow(
+                            color: isSelected ? PuffFreeTheme.accentTeal.opacity(0.4) : .clear,
+                            radius: 10, y: 4
+                        )
+                        .scaleEffect(isSelected ? 1.03 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isSelected)
                     }
+                    .buttonStyle(.plain)
+                    .scaleEffect(isVisible ? 1 : 0.8)
+                    .opacity(isVisible ? 1 : 0)
+                    .animation(
+                        .spring(response: 0.45, dampingFraction: 0.68).delay(Double(idx) * 0.07 + 0.12),
+                        value: isVisible
+                    )
                 }
             }
             .padding(.horizontal, 24)
+            .padding(.top, 28)
 
             Spacer()
 
@@ -67,9 +91,16 @@ struct NicotineTypeStepView: View {
                     .padding(.vertical, 16)
                     .background(PuffFreeTheme.primaryGradient)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: PuffFreeTheme.accentTeal.opacity(0.25), radius: 10, y: 4)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 32)
+            .padding(.bottom, 36)
+        }
+        .onAppear {
+            titleVisible = true
+            for idx in NicotineType.allCases.indices {
+                visibleCards.insert(idx)
+            }
         }
     }
 }

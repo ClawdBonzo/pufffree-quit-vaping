@@ -11,7 +11,6 @@ class GamificationViewModel {
     var unlockedBadges: [Badge] = []
 
     private let modelContext: ModelContext?
-    private var hapticsManager: HapticManager { HapticManager.shared }
 
     init(modelContext: ModelContext? = nil) {
         self.modelContext = modelContext
@@ -28,10 +27,10 @@ class GamificationViewModel {
         let (leveledUp, newLevel) = state.addXP(amount, from: source)
 
         if leveledUp, let level = newLevel {
-            hapticsManager.notification(.success)
+            HapticManager.notification(.success)
             // Could trigger confetti, level-up animation, etc.
         } else {
-            hapticsManager.selection()
+            HapticManager.selection()
         }
 
         saveGamificationState()
@@ -66,7 +65,7 @@ class GamificationViewModel {
         state.updateStreak(daysSinceQuit: daysSinceQuit)
 
         if state.streakDays > previousStreak {
-            hapticsManager.notification(.success)
+            HapticManager.notification(.success)
             // Could trigger celebration animation
         }
 
@@ -119,7 +118,7 @@ class GamificationViewModel {
 
         gamificationState?.totalQuestsCompleted += 1
 
-        hapticsManager.notification(.success)
+        HapticManager.notification(.success)
         saveQuests()
         saveGamificationState()
     }
@@ -143,7 +142,7 @@ class GamificationViewModel {
                 state.totalBadgesUnlocked += 1
 
                 unlockedBadges.append(badge)
-                hapticsManager.notification(.warning) // Special haptic for badge unlock
+                HapticManager.notification(.warning) // Special haptic for badge unlock
                 saveGamificationState()
             }
         }

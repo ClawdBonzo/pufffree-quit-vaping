@@ -74,7 +74,7 @@ struct LevelUpCelebrationView: View {
                 opacity = 1
             }
 
-            HapticManager.shared.notification(.success)
+            HapticManager.notification(.success)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 withAnimation(.easeOut(duration: 0.3)) {
@@ -159,7 +159,7 @@ struct BadgeUnlockCelebrationView: View {
                 opacity = 1
             }
 
-            HapticManager.shared.notification(.warning)
+            HapticManager.notification(.warning)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 withAnimation(.easeOut(duration: 0.3)) {
@@ -262,7 +262,7 @@ struct StreakMilestoneCelebrationView: View {
                 isVisible = true
             }
 
-            HapticManager.shared.notification(.success)
+            HapticManager.notification(.success)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
                 withAnimation(.easeOut(duration: 0.3)) {
@@ -326,7 +326,7 @@ struct QuestCompletionToastView: View {
                 opacity = 1
             }
 
-            HapticManager.shared.selection()
+            HapticManager.selection()
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 withAnimation(.easeIn(duration: 0.3)) {
