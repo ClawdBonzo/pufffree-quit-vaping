@@ -158,11 +158,13 @@ class GamificationViewModel {
         case .cravingsResisted(let count):
             return profile.totalCravingsResisted >= count
 
-        case .breathworkSessions(let count):
-            return 0 >= count // TODO: Implement breathing session tracking
+        case .breathworkSessions:
+            // TODO: Track breathwork sessions — badge locked until implemented
+            return false
 
-        case .journalEntries(let count):
-            return 0 >= count // TODO: Implement journal entry counting
+        case .journalEntries:
+            // TODO: Track journal entries — badge locked until implemented
+            return false
 
         case .motivationCount(let count):
             return profile.primaryMotivation.isEmpty ? 1 >= count : (profile.additionalMotivations.count + 1) >= count

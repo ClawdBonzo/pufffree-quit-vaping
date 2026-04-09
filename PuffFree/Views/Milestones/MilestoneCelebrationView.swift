@@ -124,5 +124,5 @@ struct ConfettiParticle {
         Color(hex: "06B6D4"),
         Color(hex: "10B981"),
         Color(hex: "EC4899")
-    ].randomElement()!
+    ].randomElement() ?? Color(hex: "F59E0B")
 }

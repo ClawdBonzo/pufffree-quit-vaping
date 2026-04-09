@@ -7,7 +7,11 @@ enum AppConstants {
     static let widgetKind = "PuffFreeWidget"
 
     enum RevenueCat {
-        // TODO: Replace with live key before App Store release
+        // ⚠️ BEFORE SUBMITTING TO APP STORE:
+        // Replace test key below with live key from RevenueCat dashboard
+        // (appl_... format). Leaving the test key in production will cause
+        // all purchases to be tracked incorrectly.
+        // TODO: Replace with live appl_... key before App Store submission
         static let apiKey = "test_xtLbSChuPPurZcNcOUnPWyuFuQb"
         static let entitlement = "pro"
         enum ProductID {

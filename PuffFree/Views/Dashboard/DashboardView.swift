@@ -31,6 +31,12 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                // Phoenix ambient particle background
+                PuffFreeTheme.backgroundPrimary.ignoresSafeArea()
+                PhoenixParticleField(intensity: 0.6)
+                    .opacity(0.55)
+                    .ignoresSafeArea()
+
                 ScrollView {
                     VStack(spacing: 14) {
 
@@ -83,7 +89,7 @@ struct DashboardView: View {
                     .padding(.top, 8)
                 }
                 .scrollIndicators(.hidden)
-                .background(PuffFreeTheme.backgroundPrimary)
+                .background(.clear)
 
                 // Celebration Overlays
                 if let celebration = activeCelebration {
@@ -140,48 +146,49 @@ struct DashboardView: View {
 
         GlassCard {
             VStack(spacing: 14) {
+                // Phoenix day label
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .font(.caption2)
+                        .foregroundStyle(PuffFreeTheme.flameGradient)
+                    Text("Puff-Free For")
+                        .font(.caption)
+                        .foregroundColor(PuffFreeTheme.textSecondary)
+                    Spacer()
+                    if let gamState, gamState.streakDays >= 7 {
+                        Text("PHOENIX RISING")
+                            .font(.system(size: 9, weight: .black, design: .rounded))
+                            .foregroundStyle(PuffFreeTheme.goldGradient)
+                            .tracking(1.5)
+                    }
+                }
+                .padding(.bottom, -6)
+
                 // Timer row
                 HStack(alignment: .center, spacing: 0) {
-                    VStack(spacing: 2) {
-                        Text("Puff-Free For")
-                            .font(.caption)
-                            .foregroundColor(PuffFreeTheme.textSecondary)
-
-                        HStack(spacing: 2) {
-                            HeroTimeUnit(value: viewModel.timeComponents.days,    label: "D")
-                            HeroColon()
-                            HeroTimeUnit(value: viewModel.timeComponents.hours,   label: "H")
-                            HeroColon()
-                            HeroTimeUnit(value: viewModel.timeComponents.minutes, label: "M")
-                            HeroColon()
-                            HeroTimeUnit(value: viewModel.timeComponents.seconds, label: "S")
-                        }
+                    HStack(spacing: 2) {
+                        HeroTimeUnit(value: viewModel.timeComponents.days,    label: "D")
+                        HeroColon()
+                        HeroTimeUnit(value: viewModel.timeComponents.hours,   label: "H")
+                        HeroColon()
+                        HeroTimeUnit(value: viewModel.timeComponents.minutes, label: "M")
+                        HeroColon()
+                        HeroTimeUnit(value: viewModel.timeComponents.seconds, label: "S")
                     }
+                    // Accessibility: combine timer digits into a single readable description
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(
+                        "Puff-free for \(viewModel.timeComponents.days) days, " +
+                        "\(viewModel.timeComponents.hours) hours, " +
+                        "\(viewModel.timeComponents.minutes) minutes"
+                    )
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Streak badge
-                    VStack(spacing: 3) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.orange.opacity(0.18))
-                                .frame(width: 52, height: 52)
-                                .scaleEffect(streakPulse ? 1.12 : 1.0)
-                                .animation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true), value: streakPulse)
-
-                            Image(systemName: "flame.fill")
-                                .font(.title2)
-                                .foregroundStyle(
-                                    LinearGradient(colors: [.orange, .red], startPoint: .top, endPoint: .bottom)
-                                )
-                        }
-                        Text("\(gamificationViewModel?.gamificationState?.streakDays ?? 0)")
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        Text("streak")
-                            .font(.system(size: 9, weight: .semibold))
-                            .foregroundColor(PuffFreeTheme.textTertiary)
-                            .textCase(.uppercase)
-                    }
+                    // Phoenix Flame Streak Badge (has its own accessibilityLabel)
+                    PhoenixFlameBadge(
+                        streakDays: gamificationViewModel?.gamificationState?.streakDays ?? 0,
+                        isPulsing: streakPulse
+                    )
                 }
 
                 Divider().background(Color.white.opacity(0.08))
@@ -194,6 +201,7 @@ struct DashboardView: View {
                                 Image(systemName: state.currentLevel.icon)
                                     .font(.caption)
                                     .foregroundColor(Color(hex: state.currentLevel.color))
+                                    .accessibilityHidden(true)
                                 Text(state.currentLevel.title)
                                     .font(.caption)
                                     .fontWeight(.semibold)
@@ -202,7 +210,8 @@ struct DashboardView: View {
                             Spacer()
                             Text("\(state.totalXP) XP")
                                 .font(.caption)
-                                .foregroundColor(PuffFreeTheme.accentTeal)
+                                .fontWeight(.bold)
+                                .foregroundStyle(PuffFreeTheme.goldGradient)
                         }
 
                         // Animated XP progress bar
@@ -213,14 +222,9 @@ struct DashboardView: View {
                                     .frame(height: 7)
 
                                 RoundedRectangle(cornerRadius: 4)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [PuffFreeTheme.accentTeal, Color(hex: state.currentLevel.color)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
+                                    .fill(PuffFreeTheme.flameGradient)
                                     .frame(width: xpBarWidth, height: 7)
+                                    .shadow(color: PuffFreeTheme.emberOrange.opacity(0.6), radius: 4, y: 0)
                                     .onAppear {
                                         let pct = xpProgressPct(state: state)
                                         withAnimation(.spring(response: 1.1, dampingFraction: 0.8).delay(0.5)) {
@@ -230,6 +234,13 @@ struct DashboardView: View {
                             }
                         }
                         .frame(height: 7)
+                        // Accessibility for the XP bar
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("XP progress: \(state.totalXP) experience points, level \(state.currentLevel.title)")
+                        .accessibilityValue({
+                            let pct = Int(xpProgressPct(state: state) * 100)
+                            return "\(pct) percent to next level"
+                        }())
 
                         // Next level teaser
                         if let next = PlayerLevel(rawValue: state.currentLevel.rawValue + 1) {
@@ -238,6 +249,7 @@ struct DashboardView: View {
                                 Text("Next: \(next.title)  →  \(next.xpRequired) XP")
                                     .font(.system(size: 9))
                                     .foregroundColor(PuffFreeTheme.textTertiary)
+                                    .accessibilityHidden(true)
                             }
                         }
                     }
@@ -392,13 +404,16 @@ struct HeroTimeUnit: View {
 
 struct HeroColon: View {
     @State private var visible = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Text(":")
             .font(.system(size: 26, weight: .bold, design: .monospaced))
-            .foregroundColor(PuffFreeTheme.accentTeal)
+            .foregroundStyle(PuffFreeTheme.flameGradient)
             .opacity(visible ? 1 : 0.25)
+            .accessibilityHidden(true)
             .onAppear {
+                guard !reduceMotion else { return }
                 withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
                     visible.toggle()
                 }
@@ -431,6 +446,8 @@ struct MiniStatCard: View {
         .padding(.vertical, 14)
         .background(PuffFreeTheme.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
         .overlay(
             RoundedRectangle(cornerRadius: 14)
                 .stroke(color.opacity(0.2), lineWidth: 1)

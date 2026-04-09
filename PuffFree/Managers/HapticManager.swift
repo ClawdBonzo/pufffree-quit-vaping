@@ -1,23 +1,24 @@
 import UIKit
 
+/// All haptic feedback is dispatched on the main actor — UIKit generators require the main thread.
+@MainActor
 enum HapticManager {
     static func impact(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
-        let generator = UIImpactFeedbackGenerator(style: style)
-        generator.impactOccurred()
+        UIImpactFeedbackGenerator(style: style).impactOccurred()
     }
 
     static func notification(_ type: UINotificationFeedbackGenerator.FeedbackType) {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(type)
+        UINotificationFeedbackGenerator().notificationOccurred(type)
     }
 
     static func selection() {
-        let generator = UISelectionFeedbackGenerator()
-        generator.selectionChanged()
+        UISelectionFeedbackGenerator().selectionChanged()
     }
 
+    /// Plays a layered haptic sequence: heavy → success → light.
+    /// Runs on MainActor so UIKit calls stay on the main thread.
     static func celebration() {
-        Task {
+        Task { @MainActor in
             impact(.heavy)
             try? await Task.sleep(for: .milliseconds(100))
             notification(.success)

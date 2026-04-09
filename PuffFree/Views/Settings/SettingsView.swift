@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var showRestoreAlert = false
     @State private var restoreMessage = ""
     @State private var isRestoring = false
+    @State private var showShareView = false
 
     private var profile: UserProfile? { profiles.first }
 
@@ -72,6 +73,13 @@ struct SettingsView: View {
                         Label("Savings Tracker", systemImage: "dollarsign.circle.fill")
                     }
                     .foregroundColor(.white)
+
+                    Button {
+                        showShareView = true
+                    } label: {
+                        Label("Share My Journey", systemImage: "flame.fill")
+                    }
+                    .foregroundStyle(PuffFreeTheme.flameGradient)
 
                     Button {
                         showPaywall = true
@@ -166,6 +174,11 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView(onDismiss: { showPaywall = false })
+            }
+            .sheet(isPresented: $showShareView) {
+                if let profile {
+                    PhoenixShareView(profile: profile)
+                }
             }
             .alert("Restore Purchases", isPresented: $showRestoreAlert) {
                 Button("OK", role: .cancel) {}

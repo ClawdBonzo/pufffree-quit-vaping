@@ -14,9 +14,11 @@ struct LogCravingSheet: View {
     @State private var gamificationViewModel: GamificationViewModel?
     @State private var showCelebration = false
     @State private var celebrationData: (xp: Int, type: String)? = nil
+    @State private var showResistAnimation = false
 
     var body: some View {
         NavigationStack {
+            ZStack {
             ScrollView {
                 VStack(spacing: 24) {
                     // Intensity slider
@@ -168,10 +170,18 @@ struct LogCravingSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveCraving() }
-                        .foregroundColor(PuffFreeTheme.accentTeal)
+                        .foregroundStyle(PuffFreeTheme.flameGradient)
                         .fontWeight(.semibold)
                 }
             }
+
+            // Phoenix resist celebration overlay
+            if showResistAnimation {
+                PhoenixResistOverlay()
+                    .transition(.opacity)
+                    .zIndex(10)
+            }
+            } // end ZStack
         }
     }
 
@@ -220,7 +230,16 @@ struct LogCravingSheet: View {
         }
 
         HapticManager.notification(didResist ? .success : .warning)
-        dismiss()
+
+        if didResist {
+            // Show phoenix celebration before dismissing
+            withAnimation(.easeIn(duration: 0.2)) { showResistAnimation = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                dismiss()
+            }
+        } else {
+            dismiss()
+        }
     }
 }
 
@@ -245,6 +264,96 @@ struct ResistButton: View {
             .padding(.vertical, 14)
             .background(isSelected ? color : PuffFreeTheme.backgroundElevated)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+    }
+}
+
+// MARK: - Phoenix Resist Overlay
+// Full-screen transformation shown when user successfully resists a craving.
+
+struct PhoenixResistOverlay: View {
+    @State private var scale: CGFloat    = 0.5
+    @State private var opacity: Double   = 0
+    @State private var flamePulse        = false
+    @State private var burstVisible      = false
+    @State private var textOffset: CGFloat = 20
+
+    var body: some View {
+        ZStack {
+            Color(hex: "040608").opacity(0.94)
+                .ignoresSafeArea()
+
+            PhoenixParticleField(intensity: 1.8)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+            RadialGradient(
+                colors: [PuffFreeTheme.smokeTeal.opacity(0.35), .clear],
+                center: .center, startRadius: 0, endRadius: 200
+            )
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
+
+            VStack(spacing: 20) {
+                ZStack {
+                    if burstVisible { EmberBurstView(particleCount: 16) }
+
+                    Circle()
+                        .fill(PuffFreeTheme.smokeTeal.opacity(0.18))
+                        .frame(width: 130, height: 130)
+                        .scaleEffect(flamePulse ? 1.2 : 1.0)
+                        .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: flamePulse)
+                        .blur(radius: 10)
+
+                    ZStack {
+                        Image(systemName: "shield.fill")
+                            .font(.system(size: 62, weight: .bold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [PuffFreeTheme.smokeTeal, PuffFreeTheme.phoenixGold],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                )
+                            )
+                            .shadow(color: PuffFreeTheme.smokeTeal.opacity(0.8), radius: 18)
+
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundStyle(PuffFreeTheme.flameGradient)
+                            .offset(y: -4)
+                    }
+                    .scaleEffect(flamePulse ? 1.06 : 0.97)
+                    .animation(.easeInOut(duration: 0.7).repeatForever(autoreverses: true), value: flamePulse)
+                }
+                .frame(height: 140)
+
+                VStack(spacing: 8) {
+                    Text("CRAVING DEFEATED!")
+                        .font(.system(size: 26, weight: .black, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [PuffFreeTheme.smokeTeal, PuffFreeTheme.phoenixGold],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                        .shadow(color: PuffFreeTheme.smokeTeal.opacity(0.5), radius: 10)
+
+                    Text("The phoenix rises stronger.")
+                        .font(.subheadline)
+                        .foregroundColor(PuffFreeTheme.textSecondary)
+                }
+                .offset(y: textOffset)
+                .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.15), value: textOffset)
+            }
+            .scaleEffect(scale)
+            .opacity(opacity)
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.65)) {
+                scale = 1; opacity = 1; textOffset = 0
+            }
+            flamePulse = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { burstVisible = true }
+            HapticManager.celebration()
         }
     }
 }

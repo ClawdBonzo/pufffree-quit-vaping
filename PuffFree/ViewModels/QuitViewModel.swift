@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 import SwiftData
-import Combine
 
 @Observable @MainActor
 final class QuitViewModel {
