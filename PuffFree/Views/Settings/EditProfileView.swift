@@ -46,7 +46,7 @@ struct EditProfileView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     // Usage stats
-                    UsageSliderRow(
+                    PremiumSliderRow(
                         title: "Daily Usage",
                         value: $dailyUsage,
                         range: 1...100,
@@ -54,7 +54,7 @@ struct EditProfileView: View {
                         step: 1
                     )
 
-                    UsageSliderRow(
+                    PremiumSliderRow(
                         title: "Cost per Unit",
                         value: $costPerPack,
                         range: 1...100,
@@ -64,7 +64,7 @@ struct EditProfileView: View {
                     )
 
                     if profile.nicotineType == .vape {
-                        UsageSliderRow(
+                        PremiumSliderRow(
                             title: "Nicotine Strength",
                             value: $nicotineStrength,
                             range: 0...60,
