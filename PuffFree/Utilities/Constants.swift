@@ -11,10 +11,10 @@ enum AppConstants {
         static let apiKey = "test_xtLbSChuPPurZcNcOUnPWyuFuQb"
         static let entitlement = "pro"
         enum ProductID {
-            static let weekly   = "com.clawdbonzo.PuffFree.pro.weekly"
-            static let monthly  = "com.clawdbonzo.PuffFree.pro.monthly"
-            static let yearly   = "com.clawdbonzo.PuffFree.pro.yearly"
-            static let lifetime = "com.clawdbonzo.PuffFree.pro.lifetime"
+            static let weekly   = "com.clawdbonzo.pufffree.weekly"
+            static let monthly  = "com.clawdbonzo.pufffree.monthly"
+            static let yearly   = "com.clawdbonzo.pufffree.yearly"
+            static let lifetime = "com.clawdbonzo.pufffree.lifetime"
         }
     }
 
