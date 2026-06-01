@@ -4,8 +4,13 @@ import SwiftData
 struct HealthTimelineView: View {
     @Query private var profiles: [UserProfile]
     @State private var viewModel = HealthViewModel()
+    @Environment(\.subscriptionViewModel) private var subscriptionVM
+    @State private var showPaywall = false
 
     private var profile: UserProfile? { profiles.first }
+
+    /// Free users see the first 3 milestones; Pro sees all
+    private let freeMilestoneLimit = 3
 
     var body: some View {
         NavigationStack {
@@ -32,10 +37,18 @@ struct HealthTimelineView: View {
                     // Timeline
                     LazyVStack(spacing: 0) {
                         ForEach(Array(viewModel.milestones.enumerated()), id: \.element.id) { index, milestone in
-                            HealthMilestoneRow(
-                                milestone: milestone,
-                                isLast: index == viewModel.milestones.count - 1
-                            )
+                            if index < freeMilestoneLimit || subscriptionVM.isPro {
+                                HealthMilestoneRow(
+                                    milestone: milestone,
+                                    isLast: subscriptionVM.isPro
+                                        ? index == viewModel.milestones.count - 1
+                                        : index == freeMilestoneLimit - 1
+                                )
+                            } else if index == freeMilestoneLimit {
+                                // Gate overlay at the boundary
+                                lockedMilestoneGate
+                            }
+                            // indices beyond freeMilestoneLimit hidden for free users
                         }
                     }
                     .padding(.horizontal, 16)
@@ -49,12 +62,45 @@ struct HealthTimelineView: View {
             .navigationTitle("Health Recovery")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .sheet(isPresented: $showPaywall) {
+                PaywallView(onDismiss: { showPaywall = false })
+                    .environment(\.subscriptionViewModel, subscriptionVM)
+            }
         }
         .onAppear {
             if let profile {
                 viewModel.update(hoursSinceQuit: profile.hoursSinceQuit)
             }
         }
+    }
+
+    @ViewBuilder
+    private var lockedMilestoneGate: some View {
+        let remaining = viewModel.milestones.count - freeMilestoneLimit
+        Button { showPaywall = true } label: {
+            VStack(spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.title2)
+                    .foregroundStyle(PuffFreeTheme.flameGradient)
+                Text("Unlock \(remaining) More Milestones")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                Text("See your full health recovery timeline")
+                    .font(.caption)
+                    .foregroundColor(PuffFreeTheme.textSecondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 28)
+            .background(PuffFreeTheme.backgroundCard)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(PuffFreeTheme.emberOrange.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 8)
     }
 }
 

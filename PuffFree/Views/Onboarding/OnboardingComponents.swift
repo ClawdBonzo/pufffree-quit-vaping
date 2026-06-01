@@ -38,23 +38,13 @@ struct FloatingOrb: View {
 // MARK: - Social Proof Capsule
 
 struct SocialProofBar: View {
-    var label: String = "50,000+ quit successfully"
+    var label: String = "Track health, earn badges, quit for good"
 
     var body: some View {
         HStack(spacing: 6) {
-            HStack(spacing: 1) {
-                ForEach(0..<5, id: \.self) { _ in
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 9))
-                        .foregroundColor(Color(hex: "FFD700"))
-                }
-            }
-            Text("4.9")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.white)
-            Text("·")
-                .font(.system(size: 11))
-                .foregroundColor(.white.opacity(0.35))
+            Image(systemName: "flame.fill")
+                .font(.system(size: 10))
+                .foregroundColor(Color(hex: "FFD700"))
             Text(label)
                 .font(.system(size: 11))
                 .foregroundColor(.white.opacity(0.65))

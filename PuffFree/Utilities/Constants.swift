@@ -7,18 +7,25 @@ enum AppConstants {
     static let widgetKind = "PuffFreeWidget"
 
     enum RevenueCat {
-        // ⚠️ BEFORE SUBMITTING TO APP STORE:
-        // Replace test key below with live key from RevenueCat dashboard
-        // (appl_... format). Leaving the test key in production will cause
-        // all purchases to be tracked incorrectly.
-        // TODO: Replace with live appl_... key before App Store submission
-        static let apiKey = "test_xtLbSChuPPurZcNcOUnPWyuFuQb"
+        // RevenueCat public SDK key.
+        //   • DEBUG  → Test Store key (sandbox testing in the simulator/dev builds)
+        //   • RELEASE → live App Store key (appl_…) for the "PuffFree (App Store)"
+        //     app configuration in the RevenueCat "PuffFree" project (8ced6486).
+        static let apiKey: String = {
+            #if DEBUG
+            return "test_xtLbSChuPPurZcNcOUnPWyuFuQb"
+            #else
+            return "appl_QbhvynfvURhXlUaIFvxLIENXEpV"
+            #endif
+        }()
         static let entitlement = "pro"
+        // NOTE: Offerings/packages are fetched from RevenueCat at runtime; these
+        // identifiers are reference-only and must match App Store Connect exactly.
         enum ProductID {
-            static let weekly   = "com.clawdbonzo.pufffree.weekly"
-            static let monthly  = "com.clawdbonzo.pufffree.monthly"
-            static let yearly   = "com.clawdbonzo.pufffree.yearly"
-            static let lifetime = "com.clawdbonzo.pufffree.lifetime"
+            static let weekly   = "com.clawdbonzo.PuffFree.pro.weekly"
+            static let monthly  = "com.clawdbonzo.PuffFree.pro.monthly"
+            static let yearly   = "com.clawdbonzo.PuffFree.pro.yearly"
+            static let lifetime = "com.clawdbonzo.PuffFree.pro.lifetime"
         }
     }
 

@@ -11,6 +11,7 @@ struct SettingsView: View {
     @State private var restoreMessage = ""
     @State private var isRestoring = false
     @State private var showShareView = false
+    @Environment(\.subscriptionViewModel) private var subscriptionVM
 
     private var profile: UserProfile? { profiles.first }
 
@@ -67,19 +68,44 @@ struct SettingsView: View {
                     }
                     .foregroundColor(.white)
 
-                    NavigationLink {
-                        SavingsView()
-                    } label: {
-                        Label("Savings Tracker", systemImage: "dollarsign.circle.fill")
+                    if subscriptionVM.isPro {
+                        NavigationLink {
+                            SavingsView()
+                        } label: {
+                            Label("Savings Tracker", systemImage: "dollarsign.circle.fill")
+                        }
+                        .foregroundColor(.white)
+                    } else {
+                        Button { showPaywall = true } label: {
+                            HStack {
+                                Label("Savings Tracker", systemImage: "dollarsign.circle.fill")
+                                Spacer()
+                                Image(systemName: "lock.fill")
+                                    .font(.caption)
+                                    .foregroundColor(PuffFreeTheme.phoenixGold)
+                            }
+                        }
+                        .foregroundColor(.white.opacity(0.5))
                     }
-                    .foregroundColor(.white)
 
                     Button {
-                        showShareView = true
+                        if subscriptionVM.isPro {
+                            showShareView = true
+                        } else {
+                            showPaywall = true
+                        }
                     } label: {
-                        Label("Share My Journey", systemImage: "flame.fill")
+                        HStack {
+                            Label("Share My Journey", systemImage: "flame.fill")
+                            if !subscriptionVM.isPro {
+                                Spacer()
+                                Image(systemName: "lock.fill")
+                                    .font(.caption)
+                                    .foregroundColor(PuffFreeTheme.phoenixGold)
+                            }
+                        }
                     }
-                    .foregroundStyle(PuffFreeTheme.flameGradient)
+                    .foregroundStyle(subscriptionVM.isPro ? PuffFreeTheme.flameGradient : LinearGradient(colors: [.white.opacity(0.5), .white.opacity(0.4)], startPoint: .leading, endPoint: .trailing))
 
                     Button {
                         showPaywall = true
@@ -174,6 +200,7 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView(onDismiss: { showPaywall = false })
+                    .environment(\.subscriptionViewModel, subscriptionVM)
             }
             .sheet(isPresented: $showShareView) {
                 if let profile {

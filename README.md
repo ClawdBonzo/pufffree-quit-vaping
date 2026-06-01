@@ -2,7 +2,7 @@
 
 A beautiful, privacy-first iOS app to help users quit vaping and nicotine products. Built entirely with SwiftUI, SwiftData, and Swift 6 for iOS 18+.
 
-**All data stays 100% on-device. No servers. No tracking. No accounts.**
+**Your quit data stays on your device. No tracking, no ads, no account required.** (Purchases are processed via the App Store and RevenueCat for subscription management — no other network activity.)
 
 ## Features
 
@@ -123,11 +123,10 @@ PuffFreeWidgets/ - Home screen and lock screen widgets
 ## Privacy
 
 PuffFree is built with privacy as a core principle:
-- **Zero data collection** - No analytics, no tracking
+- **No analytics, no tracking, no ads** - your behavior is never tracked or sold
 - **No accounts required** - No sign-up, no login
-- **No network requests** - The app never connects to the internet
-- **All data on-device** - SwiftData with local storage only
-- **No third-party SDKs** - Pure Apple frameworks
+- **Your quit data stays on-device** - SwiftData local storage; your journal, cravings, and progress never leave your phone
+- **Minimal networking** - the only network activity is purchase/subscription management via the App Store and RevenueCat (purchase history + an anonymous identifier, used solely to unlock Pro). No other servers are contacted.
 
 ## Screenshots
 

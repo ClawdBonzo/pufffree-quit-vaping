@@ -7,44 +7,35 @@ struct JournalView: View {
     @State private var showNewEntry = false
     @State private var showCheckIn = false
     @State private var selectedSegment = 0
+    @Environment(\.subscriptionViewModel) private var subscriptionVM
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Segment picker
-                Picker("View", selection: $selectedSegment) {
-                    Text("Journal").tag(0)
-                    Text("Check-Ins").tag(1)
+            Group {
+                if subscriptionVM.isPro {
+                    proJournalContent
+                } else {
+                    journalPreviewGate
                 }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-
-                ScrollView {
-                    if selectedSegment == 0 {
-                        journalContent
-                    } else {
-                        checkInContent
-                    }
-                }
-                .scrollIndicators(.hidden)
             }
             .background(PuffFreeTheme.backgroundPrimary)
             .navigationTitle("Journal")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        if selectedSegment == 0 {
-                            showNewEntry = true
-                        } else {
-                            showCheckIn = true
+                if subscriptionVM.isPro {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            if selectedSegment == 0 {
+                                showNewEntry = true
+                            } else {
+                                showCheckIn = true
+                            }
+                            HapticManager.impact(.light)
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundStyle(PuffFreeTheme.primaryGradient)
                         }
-                        HapticManager.impact(.light)
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundStyle(PuffFreeTheme.primaryGradient)
                     }
                 }
             }
@@ -58,6 +49,57 @@ struct JournalView: View {
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
             }
+        }
+    }
+
+    // MARK: - Pro Content
+
+    @ViewBuilder
+    private var proJournalContent: some View {
+        VStack(spacing: 0) {
+            Picker("View", selection: $selectedSegment) {
+                Text("Journal").tag(0)
+                Text("Check-Ins").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+
+            ScrollView {
+                if selectedSegment == 0 {
+                    journalContent
+                } else {
+                    checkInContent
+                }
+            }
+            .scrollIndicators(.hidden)
+        }
+    }
+
+    // MARK: - Free User Preview Gate
+
+    @ViewBuilder
+    private var journalPreviewGate: some View {
+        VStack(spacing: 0) {
+            // Non-interactive segment picker preview
+            Picker("View", selection: .constant(0)) {
+                Text("Journal").tag(0)
+                Text("Check-Ins").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .disabled(true)
+            .opacity(0.5)
+
+            Spacer()
+        }
+        .overlay {
+            PremiumGateOverlay(
+                title: "Your Private Journal",
+                subtitle: "Track your thoughts, mood, and daily check-ins.",
+                iconName: "book.fill"
+            )
         }
     }
 

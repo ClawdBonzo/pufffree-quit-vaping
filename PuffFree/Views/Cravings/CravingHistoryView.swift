@@ -47,7 +47,7 @@ struct CravingLogRow: View {
                 HStack {
                     Image(systemName: log.trigger.icon)
                         .font(.caption)
-                    Text(log.trigger.rawValue)
+                    Text(log.trigger.displayName)
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }

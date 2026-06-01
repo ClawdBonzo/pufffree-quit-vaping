@@ -129,7 +129,7 @@ private struct NicotineTypeCard: View {
                     }
 
                     VStack(spacing: 2) {
-                        Text(type.rawValue)
+                        Text(type.displayName)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .multilineTextAlignment(.center)

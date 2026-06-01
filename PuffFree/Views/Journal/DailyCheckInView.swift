@@ -33,7 +33,7 @@ struct DailyCheckInView: View {
                                     VStack(spacing: 4) {
                                         Image(systemName: m.icon)
                                             .font(.title2)
-                                        Text(m.rawValue)
+                                        Text(m.displayName)
                                             .font(.caption2)
                                     }
                                     .foregroundColor(mood == m ? .white : PuffFreeTheme.textTertiary)

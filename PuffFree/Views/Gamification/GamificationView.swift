@@ -2,32 +2,43 @@ import SwiftUI
 
 struct GamificationView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.subscriptionViewModel) private var subscriptionVM
     @State private var viewModel: GamificationViewModel?
     @State private var showBadges = false
 
     var body: some View {
+        Group {
+            if subscriptionVM.isPro {
+                proContent
+            } else {
+                gamificationPreviewGate
+            }
+        }
+        .background(PuffFreeTheme.backgroundPrimary)
+        .onAppear {
+            if viewModel == nil {
+                viewModel = GamificationViewModel(modelContext: modelContext)
+            }
+        }
+    }
+
+    // MARK: - Pro Content
+
+    @ViewBuilder
+    private var proContent: some View {
         VStack(spacing: 20) {
-            // Level Card
             if let state = viewModel?.gamificationState {
                 LevelCardView(state: state, viewModel: viewModel)
             }
-
-            // Streak Display
             if let state = viewModel?.gamificationState {
                 StreakView(state: state)
             }
-
-            // XP Progress Bar
             if let viewModel = viewModel {
                 XPProgressView(viewModel: viewModel)
             }
-
-            // Quick Stats
             if let state = viewModel?.gamificationState {
                 GamQuickStatsView(state: state)
             }
-
-            // Badges Button
             Button {
                 showBadges = true
             } label: {
@@ -53,14 +64,80 @@ struct GamificationView: View {
             Spacer()
         }
         .padding(20)
-        .background(PuffFreeTheme.backgroundPrimary)
-        .onAppear {
-            if viewModel == nil {
-                viewModel = GamificationViewModel(modelContext: modelContext)
-            }
-        }
         .sheet(isPresented: $showBadges) {
             BadgesView(viewModel: viewModel)
+        }
+    }
+
+    // MARK: - Free User Preview Gate
+
+    @ViewBuilder
+    private var gamificationPreviewGate: some View {
+        VStack(spacing: 0) {
+            // Skeleton preview cards (dimmed)
+            VStack(spacing: 16) {
+                // Level skeleton
+                HStack(spacing: 16) {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(PuffFreeTheme.backgroundCard)
+                        .frame(width: 60, height: 60)
+                    VStack(alignment: .leading, spacing: 4) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: 100, height: 14)
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.06))
+                            .frame(width: 70, height: 10)
+                    }
+                    Spacer()
+                }
+                .padding(16)
+                .background(PuffFreeTheme.backgroundCard)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                // Streak skeleton
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: 120, height: 14)
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.06))
+                            .frame(width: 80, height: 10)
+                    }
+                    Spacer()
+                }
+                .padding(16)
+                .background(PuffFreeTheme.backgroundCard)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                // XP bar skeleton
+                VStack(spacing: 8) {
+                    HStack {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: 140, height: 14)
+                        Spacer()
+                    }
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.white.opacity(0.06))
+                        .frame(height: 12)
+                }
+                .padding(16)
+                .background(PuffFreeTheme.backgroundCard)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .padding(20)
+            .opacity(0.5)
+
+            Spacer()
+        }
+        .overlay {
+            PremiumGateOverlay(
+                title: "Unlock Your Wins",
+                subtitle: "Earn badges, complete quests, and level up your phoenix.",
+                iconName: "trophy.fill"
+            )
         }
     }
 }
@@ -100,7 +177,7 @@ struct LevelCardView: View {
 
                 // Level Info
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(state.currentLevel.title)
+                    Text(state.currentLevel.localizedTitle)
                         .font(.headline)
                         .foregroundColor(.white)
 

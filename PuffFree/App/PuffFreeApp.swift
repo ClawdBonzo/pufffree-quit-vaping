@@ -5,10 +5,13 @@ import RevenueCat
 @main
 struct PuffFreeApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var subscriptionViewModel = SubscriptionViewModel()
 
     init() {
-        // TODO: Replace with live key before App Store release
         Purchases.configure(withAPIKey: AppConstants.RevenueCat.apiKey)
+        #if DEBUG
+        DemoSeeder.seedIfNeeded(sharedModelContainer.mainContext)
+        #endif
     }
 
     var sharedModelContainer: ModelContainer = {
@@ -17,7 +20,9 @@ struct PuffFreeApp: App {
             CravingLog.self,
             MilestoneRecord.self,
             JournalEntry.self,
-            DailyCheckIn.self
+            DailyCheckIn.self,
+            GamificationState.self,
+            Quest.self
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,
@@ -35,6 +40,8 @@ struct PuffFreeApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
+                .environment(\.subscriptionViewModel, subscriptionViewModel)
+                .task { await subscriptionViewModel.refresh() }
         }
         .modelContainer(sharedModelContainer)
     }

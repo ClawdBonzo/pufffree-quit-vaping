@@ -10,6 +10,8 @@ struct DashboardView: View {
     @State private var celebratingMilestone: MilestoneType?
     @State private var activeCelebration: CelebrationOverlayType?
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.subscriptionViewModel) private var subscriptionVM
+    @State private var showProPaywall = false
 
     // Entrance animation states
     @State private var heroVisible     = false
@@ -54,13 +56,80 @@ struct DashboardView: View {
                             .opacity(statsVisible ? 1 : 0)
                             .animation(.spring(response: 0.45, dampingFraction: 0.72).delay(0.1), value: statsVisible)
 
+                        // ─── DAY 3 CONTEXTUAL BANNER ─────────────────────────
+                        if let profile, !subscriptionVM.isPro, (3...5).contains(profile.daysSinceQuit) {
+                            Button { showProPaywall = true } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "flame.fill")
+                                        .foregroundStyle(PuffFreeTheme.flameGradient)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(profile.daysSinceQuit) days strong!")
+                                            .font(.subheadline).fontWeight(.bold)
+                                            .foregroundColor(.white)
+                                        Text("See your full recovery timeline →")
+                                            .font(.caption2)
+                                            .foregroundColor(PuffFreeTheme.textSecondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundColor(PuffFreeTheme.textTertiary)
+                                }
+                                .padding(14)
+                                .background(PuffFreeTheme.emberOrange.opacity(0.1))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(PuffFreeTheme.emberOrange.opacity(0.3), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 16)
+                        }
+
                         // ─── TODAY'S QUESTS ───────────────────────────────────
-                        if let gamVM = gamificationViewModel {
+                        if subscriptionVM.isPro, let gamVM = gamificationViewModel {
                             questsSection(gamVM: gamVM)
                                 .padding(.horizontal, 16)
                                 .offset(y: questsVisible ? 0 : 20)
                                 .opacity(questsVisible ? 1 : 0)
                                 .animation(.spring(response: 0.45, dampingFraction: 0.72).delay(0.18), value: questsVisible)
+                        } else if !subscriptionVM.isPro {
+                            Button { showProPaywall = true } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "star.fill")
+                                        .font(.title3)
+                                        .foregroundColor(.yellow)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Daily Quests")
+                                            .font(.subheadline).fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                        Text("Complete quests, earn XP, level up")
+                                            .font(.caption2)
+                                            .foregroundColor(PuffFreeTheme.textSecondary)
+                                    }
+                                    Spacer()
+                                    Text("PRO")
+                                        .font(.system(size: 9, weight: .black))
+                                        .foregroundColor(PuffFreeTheme.phoenixGold)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 3)
+                                        .background(PuffFreeTheme.phoenixGold.opacity(0.15))
+                                        .clipShape(Capsule())
+                                }
+                                .padding(14)
+                                .background(PuffFreeTheme.backgroundCard)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 16)
+                            .offset(y: questsVisible ? 0 : 20)
+                            .opacity(questsVisible ? 1 : 0)
+                            .animation(.spring(response: 0.45, dampingFraction: 0.72).delay(0.18), value: questsVisible)
                         }
 
                         // ─── NEXT MILESTONE ───────────────────────────────────
@@ -131,6 +200,10 @@ struct DashboardView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) { streakPulse      = true }
         }
         .onDisappear { viewModel.stopTracking() }
+        .sheet(isPresented: $showProPaywall) {
+            PaywallView(onDismiss: { showProPaywall = false })
+                .environment(\.subscriptionViewModel, subscriptionVM)
+        }
         .fullScreenCover(isPresented: $showCelebration) {
             if let milestone = celebratingMilestone {
                 MilestoneCelebrationView(milestone: milestone, isPresented: $showCelebration)
@@ -184,17 +257,63 @@ struct DashboardView: View {
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Phoenix Flame Streak Badge (has its own accessibilityLabel)
-                    PhoenixFlameBadge(
-                        streakDays: gamificationViewModel?.gamificationState?.streakDays ?? 0,
-                        isPulsing: streakPulse
-                    )
+                    // Phoenix Flame Streak Badge (Pro) or plain number (Free)
+                    if subscriptionVM.isPro {
+                        PhoenixFlameBadge(
+                            streakDays: gamificationViewModel?.gamificationState?.streakDays ?? 0,
+                            isPulsing: streakPulse
+                        )
+                    } else {
+                        VStack(spacing: 2) {
+                            Image(systemName: "flame.fill")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                            Text("\(gamificationViewModel?.gamificationState?.streakDays ?? 0)")
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                            Text("streak")
+                                .font(.system(size: 8))
+                                .foregroundColor(PuffFreeTheme.textTertiary)
+                        }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(gamificationViewModel?.gamificationState?.streakDays ?? 0) day streak")
+                    }
                 }
 
                 Divider().background(Color.white.opacity(0.08))
 
-                // XP Level bar
-                if let state = gamState {
+                // XP Level bar (Pro only — free users see teaser)
+                if !subscriptionVM.isPro {
+                    // Dimmed XP teaser — tap to open paywall
+                    Button {
+                        showProPaywall = true
+                    } label: {
+                        HStack {
+                            HStack(spacing: 6) {
+                                Image(systemName: "lock.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(PuffFreeTheme.flameGradient)
+                                Text("XP & Levels")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white.opacity(0.5))
+                            }
+                            Spacer()
+                            Text("PRO")
+                                .font(.system(size: 9, weight: .black))
+                                .foregroundColor(PuffFreeTheme.phoenixGold)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(PuffFreeTheme.phoenixGold.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                    }
+                    .buttonStyle(.plain)
+
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.white.opacity(0.06))
+                        .frame(height: 7)
+                } else if let state = gamState {
                     VStack(spacing: 6) {
                         HStack {
                             HStack(spacing: 6) {
@@ -202,7 +321,7 @@ struct DashboardView: View {
                                     .font(.caption)
                                     .foregroundColor(Color(hex: state.currentLevel.color))
                                     .accessibilityHidden(true)
-                                Text(state.currentLevel.title)
+                                Text(state.currentLevel.localizedTitle)
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.white)
@@ -471,7 +590,7 @@ struct NextMilestoneCard: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                     Spacer()
-                    Text(milestone.rawValue)
+                    Text(milestone.displayName)
                         .font(.caption2)
                         .foregroundColor(PuffFreeTheme.accentTeal)
                         .padding(.horizontal, 8)

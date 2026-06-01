@@ -3,6 +3,7 @@ import SwiftUI
 struct WelcomeStepView: View {
     @Binding var displayName: String
     let onNext: () -> Void
+    @FocusState private var nameFieldFocused: Bool
 
     @State private var heroVisible  = false
     @State private var statsVisible = false
@@ -59,11 +60,11 @@ struct WelcomeStepView: View {
                     value: heroFloat
                 )
 
-                // ── Social proof stats ────────────────────────────────────
+                // ── Value props ───────────────────────────────────────────
                 HStack(spacing: 16) {
-                    WelcomeStat(value: "50K+", label: "Quit")
+                    WelcomeStatIcon(icon: "lungs.fill", label: "Health")
                     WelcomeStatDivider()
-                    WelcomeStat(value: "4.9★", label: "Rating")
+                    WelcomeStatIcon(icon: "trophy.fill", label: "Gamified")
                     WelcomeStatDivider()
                     WelcomeStat(value: "Free", label: "to start")
                 }
@@ -109,6 +110,9 @@ struct WelcomeStepView: View {
                         TextField("Your name (optional)", text: $displayName)
                             .textFieldStyle(.plain)
                             .foregroundColor(.white)
+                            .focused($nameFieldFocused)
+                            .submitLabel(.done)
+                            .onSubmit { nameFieldFocused = false }
                     }
                     .padding(15)
                     .background(
@@ -139,7 +143,10 @@ struct WelcomeStepView: View {
                 Spacer()
 
                 // ── CTA ───────────────────────────────────────────────────
-                Button(action: onNext) {
+                Button {
+                    nameFieldFocused = false
+                    onNext()
+                } label: {
                     HStack(spacing: 10) {
                         Text(displayName.isEmpty
                              ? "Let's Begin"
@@ -163,6 +170,7 @@ struct WelcomeStepView: View {
                 .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.48), value: ctaVisible)
             }
         }
+        .onTapGesture { nameFieldFocused = false }
         .onAppear {
             heroVisible  = true
             statsVisible = true
@@ -184,6 +192,22 @@ private struct WelcomeStat: View {
         VStack(spacing: 2) {
             Text(value)
                 .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(PuffFreeTheme.primaryGradient)
+            Text(label)
+                .font(.system(size: 11))
+                .foregroundColor(.white.opacity(0.5))
+        }
+    }
+}
+
+private struct WelcomeStatIcon: View {
+    let icon: String
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: icon)
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(PuffFreeTheme.primaryGradient)
             Text(label)
                 .font(.system(size: 11))

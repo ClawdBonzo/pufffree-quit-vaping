@@ -37,7 +37,7 @@ struct MilestoneCelebrationView: View {
                         .tracking(3)
                         .foregroundStyle(PuffFreeTheme.celebrationGradient)
 
-                    Text(milestone.rawValue)
+                    Text(milestone.displayName)
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)

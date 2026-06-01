@@ -8,26 +8,47 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if hasCompletedOnboarding, profiles.first != nil {
-                MainTabView()
-                    .transition(.opacity)
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-Paywall") {
+                PaywallView(onDismiss: {})
             } else {
-                OnboardingContainerView()
-                    .transition(.opacity)
+                rootContent
             }
+            #else
+            rootContent
+            #endif
         }
         .animation(.easeInOut(duration: 0.5), value: hasCompletedOnboarding)
+    }
+
+    @ViewBuilder private var rootContent: some View {
+        if hasCompletedOnboarding, profiles.first != nil {
+            MainTabView()
+                .transition(.opacity)
+        } else {
+            OnboardingContainerView()
+                .transition(.opacity)
+        }
     }
 }
 
 struct MainTabView: View {
-    @State private var selectedTab: TabItem = .dashboard
+    @State private var selectedTab: TabItem = {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        if let i = args.firstIndex(of: "-Screen"), i + 1 < args.count,
+           let tab = TabItem(rawValue: args[i + 1]) {
+            return tab
+        }
+        #endif
+        return .dashboard
+    }()
     @Query private var profiles: [UserProfile]
 
     enum TabItem: String, CaseIterable {
         case dashboard = "Dashboard"
         case health = "Health"
-        case gamification = "Achievements"
+        case gamification = "Wins"
         case cravings = "Cravings"
         case journal = "Journal"
         case settings = "Settings"

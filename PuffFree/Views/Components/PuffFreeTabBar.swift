@@ -11,11 +11,19 @@ struct PuffFreeTabBar: View {
                     HapticManager.selection()
                 } label: {
                     VStack(spacing: 4) {
-                        Image(tab.customIcon)
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
+                        Group {
+                            if UIImage(named: tab.customIcon) != nil {
+                                Image(tab.customIcon)
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .scaledToFit()
+                            } else {
+                                Image(systemName: tab.icon)
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                        }
+                        .frame(width: 24, height: 24)
 
                         Text(tab.rawValue)
                             .font(.system(size: 10, weight: .medium))

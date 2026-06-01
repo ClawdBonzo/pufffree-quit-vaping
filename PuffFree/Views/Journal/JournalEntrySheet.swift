@@ -31,7 +31,7 @@ struct JournalEntrySheet: View {
                                     VStack(spacing: 4) {
                                         Image(systemName: mood.icon)
                                             .font(.title2)
-                                        Text(mood.rawValue)
+                                        Text(mood.displayName)
                                             .font(.caption2)
                                     }
                                     .foregroundColor(selectedMood == mood ? .white : PuffFreeTheme.textTertiary)

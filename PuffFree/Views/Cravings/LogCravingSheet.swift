@@ -15,6 +15,9 @@ struct LogCravingSheet: View {
     @State private var showCelebration = false
     @State private var celebrationData: (xp: Int, type: String)? = nil
     @State private var showResistAnimation = false
+    @State private var showContextualPaywall = false
+    @AppStorage("hasShownFirstResistPaywall") private var hasShownFirstResist = false
+    @Environment(\.subscriptionViewModel) private var subscriptionVM
 
     var body: some View {
         NavigationStack {
@@ -56,7 +59,7 @@ struct LogCravingSheet: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: trigger.icon)
                                             .font(.caption)
-                                        Text(trigger.rawValue)
+                                        Text(trigger.displayName)
                                             .font(.caption)
                                     }
                                     .foregroundColor(selectedTrigger == trigger ? .black : .white)
@@ -116,7 +119,7 @@ struct LogCravingSheet: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: strategy.icon)
                                             .font(.caption2)
-                                        Text(strategy.rawValue)
+                                        Text(strategy.displayName)
                                             .font(.caption2)
                                     }
                                     .foregroundColor(selectedCoping == strategy ? .black : .white)
@@ -183,6 +186,14 @@ struct LogCravingSheet: View {
             }
             } // end ZStack
         }
+        .sheet(isPresented: $showContextualPaywall, onDismiss: { dismiss() }) {
+            ContextualPaywallView(
+                contextMessage: "You're a warrior!",
+                contextSubtitle: "Unlock Pro to track your victories",
+                onDismiss: { showContextualPaywall = false }
+            )
+            .environment(\.subscriptionViewModel, subscriptionVM)
+        }
     }
 
     private var intensityColor: Color {
@@ -235,7 +246,12 @@ struct LogCravingSheet: View {
             // Show phoenix celebration before dismissing
             withAnimation(.easeIn(duration: 0.2)) { showResistAnimation = true }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                dismiss()
+                if !subscriptionVM.isPro && !hasShownFirstResist {
+                    hasShownFirstResist = true
+                    showContextualPaywall = true
+                } else {
+                    dismiss()
+                }
             }
         } else {
             dismiss()

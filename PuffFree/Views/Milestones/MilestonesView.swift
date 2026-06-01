@@ -86,7 +86,7 @@ struct MilestoneGridItem: View {
                 .font(.system(size: 28))
                 .foregroundStyle(isUnlocked ? PuffFreeTheme.primaryGradient : LinearGradient(colors: [.gray], startPoint: .top, endPoint: .bottom))
 
-            Text(milestone.rawValue)
+            Text(milestone.displayName)
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(isUnlocked ? .white : PuffFreeTheme.textTertiary)
