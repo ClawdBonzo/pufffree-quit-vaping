@@ -6,11 +6,18 @@ import SwiftUI
 // Automatically hidden when Reduce Motion is enabled.
 
 struct PhoenixParticleField: View {
+    // Generated once and reused. Re-initializing the view (e.g. when a parent
+    // re-renders on the 1-second dashboard timer) must NOT regenerate 34 random
+    // particles each time — that churns allocations and resets the animation.
+    private static let sharedParticles = PhoenixParticle.generate(intensity: 1.0)
+
     private let particles: [PhoenixParticle]
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(intensity: Double = 1.0) {
-        particles = PhoenixParticle.generate(intensity: intensity)
+        particles = intensity == 1.0
+            ? Self.sharedParticles
+            : PhoenixParticle.generate(intensity: intensity)
     }
 
     var body: some View {

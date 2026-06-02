@@ -95,6 +95,40 @@ final class NotificationManager: @unchecked Sendable {
         }
     }
 
+    /// Daily support nudges at common high-risk craving windows (the post-waking
+    /// surge and the mid-afternoon slump), personalized with the user's reason for
+    /// quitting. This is the contextual, "we're with you when it's hard" loop that
+    /// keeps the app present during vulnerable moments — not just a fixed reminder.
+    func scheduleCravingSupportNotifications(motivation: String) {
+        let reason = motivation.trimmingCharacters(in: .whitespaces).isEmpty
+            ? "your health"
+            : motivation.lowercased()
+
+        let nudges: [(id: String, hour: Int, title: String, body: String)] = [
+            ("craving-support-morning", 9,
+             "You've got this",
+             "Mornings are when cravings hit hardest. Take three slow breaths — you quit for \(reason)."),
+            ("craving-support-afternoon", 15,
+             "Beat the afternoon dip",
+             "The mid-afternoon slump is a classic trigger. A glass of water and a 2-minute walk will pass the urge.")
+        ]
+
+        for n in nudges {
+            let content = UNMutableNotificationContent()
+            content.title = n.title
+            content.body = n.body
+            content.sound = .default
+            content.categoryIdentifier = "craving-support"
+
+            var dateComponents = DateComponents()
+            dateComponents.hour = n.hour
+
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+            let request = UNNotificationRequest(identifier: n.id, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request)
+        }
+    }
+
     func cancelAll() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }

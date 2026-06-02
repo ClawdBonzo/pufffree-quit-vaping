@@ -461,7 +461,7 @@ struct QuestCompletionToastView: View {
                     Text("Quest Complete!")
                         .font(.caption)
                         .foregroundColor(PuffFreeTheme.textTertiary)
-                    Text(quest.type.rawValue)
+                    Text(quest.type.displayName)
                         .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -512,7 +512,7 @@ struct QuestCompletionToastView: View {
             .offset(y: offset)
             .opacity(opacity)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Quest complete: \(quest.type.rawValue). Plus \(xpGained) experience points.")
+            .accessibilityLabel("Quest complete: \(quest.type.displayName). Plus \(xpGained) experience points.")
         }
         .onAppear {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {

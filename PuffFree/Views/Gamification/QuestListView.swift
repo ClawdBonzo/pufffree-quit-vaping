@@ -82,7 +82,7 @@ struct QuestRowView: View {
 
             // Content
             VStack(alignment: .leading, spacing: 4) {
-                Text(quest.type.rawValue)
+                Text(quest.type.displayName)
                     .font(.headline)
                     .foregroundColor(.white)
 

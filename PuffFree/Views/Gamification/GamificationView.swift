@@ -199,7 +199,7 @@ struct LevelCardView: View {
                         .font(.system(size: 16))
                         .foregroundColor(PuffFreeTheme.accentTeal)
 
-                    Text("Next: \(PlayerLevel(rawValue: state.currentLevel.rawValue + 1)?.title ?? "Unknown")")
+                    Text("Next: \(PlayerLevel(rawValue: state.currentLevel.rawValue + 1)?.localizedTitle ?? "Unknown")")
                         .font(.caption)
                         .foregroundColor(PuffFreeTheme.textSecondary)
 
@@ -379,6 +379,8 @@ struct StatCard: View {
         .padding(12)
         .background(PuffFreeTheme.backgroundCard)
         .cornerRadius(8)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 }
 

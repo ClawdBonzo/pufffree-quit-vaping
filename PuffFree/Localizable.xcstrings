@@ -114,6 +114,22 @@
         }
       }
     },
+    "30-Day Streak": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30-Tage-Serie"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Série de 30 jours"
+          }
+        }
+      }
+    },
     "4 Hours Strong": {
       "localizations": {
         "de": {
@@ -142,6 +158,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Série de 48 heures"
+          }
+        }
+      }
+    },
+    "7-Day Streak": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7-Tage-Serie"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Série de 7 jours"
           }
         }
       }
@@ -190,6 +222,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter"
+          }
+        }
+      }
+    },
+    "Add Motivation": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motivation hinzufügen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une motivation"
           }
         }
       }
@@ -269,7 +317,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toutes les quêtes accomplies ! 🎉"
+            "value": "Toutes les quêtes terminées ! 🎉"
           }
         }
       }
@@ -722,6 +770,22 @@
         }
       }
     },
+    "Daily Check-Ins": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tägliche Check-ins"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilans quotidiens"
+          }
+        }
+      }
+    },
     "Daily Motivation": {
       "localizations": {
         "de": {
@@ -765,7 +829,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jours sans tabac"
+            "value": "Jours sans fumée"
           }
         }
       }
@@ -1346,6 +1410,22 @@
         }
       }
     },
+    "Log Breathwork": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atemübung protokollieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer la respiration"
+          }
+        }
+      }
+    },
     "Log Craving": {
       "localizations": {
         "de": {
@@ -1874,6 +1954,22 @@
         }
       }
     },
+    "Resist 3 Cravings": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Verlangen widerstehen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Résister à 3 envies"
+          }
+        }
+      }
+    },
     "Resist Rate": {
       "localizations": {
         "de": {
@@ -2114,6 +2210,22 @@
         }
       }
     },
+    "Smoke-Free Day": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rauchfreier Tag"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Journée sans fumée"
+          }
+        }
+      }
+    },
     "Snus": {
       "localizations": {
         "de": {
@@ -2142,6 +2254,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Situation sociale"
+          }
+        }
+      }
+    },
+    "Start Your Journal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte dein Tagebuch"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencez votre journal"
           }
         }
       }
@@ -2238,6 +2366,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terrible"
+          }
+        }
+      }
+    },
+    "That's a great sign! When a craving hits, log it here — you'll see how often you win.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein gutes Zeichen! Wenn ein Verlangen kommt, erfasse es hier – du siehst, wie oft du gewinnst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bon signe ! Quand une envie surgit, notez-la ici — vous verrez à quelle fréquence vous gagnez."
           }
         }
       }
@@ -2354,6 +2498,22 @@
         }
       }
     },
+    "Track your mood, energy, and progress every day.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verfolge täglich deine Stimmung, Energie und Fortschritte."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivez votre humeur, votre énergie et vos progrès chaque jour."
+          }
+        }
+      }
+    },
     "Unlock Insights": {
       "localizations": {
         "de": {
@@ -2414,6 +2574,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Débloqué"
+          }
+        }
+      }
+    },
+    "Untitled": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne Titel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sans titre"
           }
         }
       }
@@ -2542,6 +2718,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pourquoi arrêtez-vous ?"
+          }
+        }
+      }
+    },
+    "Write about your journey, track your thoughts, and celebrate wins.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibe über deinen Weg, halte deine Gedanken fest und feiere Erfolge."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écrivez sur votre parcours, notez vos pensées et célébrez vos victoires."
+          }
+        }
+      }
+    },
+    "You quit for": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hörst auf für"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous arrêtez pour"
           }
         }
       }

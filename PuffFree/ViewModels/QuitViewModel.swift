@@ -30,25 +30,42 @@ final class QuitViewModel {
 
     private func updateStats() {
         guard let profile else { return }
-        timeComponents = profile.timeSinceQuit
-        moneySaved = profile.moneySaved
-        puffsAvoided = profile.puffsAvoided
-        lifeRegained = profile.lifeRegained
-        currentStreak = profile.daysSinceQuit
+
+        // Only assign when the value actually changed. With @Observable, every
+        // property set notifies observers even if the value is identical, which
+        // would re-render any view reading it on every 1-second tick. Gating on
+        // change keeps the per-second redraw scoped to what truly moved.
+        let newComponents = profile.timeSinceQuit
+        if newComponents != timeComponents { timeComponents = newComponents }
+
+        let newMoney = profile.moneySaved
+        if newMoney != moneySaved { moneySaved = newMoney }
+
+        let newPuffs = profile.puffsAvoided
+        if newPuffs != puffsAvoided { puffsAvoided = newPuffs }
+
+        let newLife = profile.lifeRegained
+        if newLife != lifeRegained { lifeRegained = newLife }
+
+        let newStreak = profile.daysSinceQuit
+        if newStreak != currentStreak { currentStreak = newStreak }
 
         let hoursSinceQuit = profile.hoursSinceQuit
         let allMilestones = MilestoneType.allCases
-        nextMilestone = allMilestones.first { $0.hoursRequired > hoursSinceQuit }
+        let newNext = allMilestones.first { $0.hoursRequired > hoursSinceQuit }
+        if newNext != nextMilestone { nextMilestone = newNext }
 
-        if let next = nextMilestone {
+        let newProgress: Double
+        if let next = newNext {
             let previousHours = allMilestones
                 .last { $0.hoursRequired <= hoursSinceQuit }?.hoursRequired ?? 0
             let range = Double(next.hoursRequired - previousHours)
             let progress = Double(hoursSinceQuit - previousHours)
-            progressToNextMilestone = min(max(progress / range, 0), 1)
+            newProgress = min(max(progress / range, 0), 1)
         } else {
-            progressToNextMilestone = 1.0
+            newProgress = 1.0
         }
+        if newProgress != progressToNextMilestone { progressToNextMilestone = newProgress }
     }
 
     func checkForNewMilestones(

@@ -124,6 +124,12 @@ struct BadgeItemView: View {
                     lineWidth: 1.5
                 )
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(badge.title)
+        .accessibilityValue(isUnlocked
+            ? NSLocalizedString("Unlocked", comment: "Badge state")
+            : NSLocalizedString("Locked", comment: "Badge state"))
+        .accessibilityHint(badge.badgeDescription)
     }
 }
 

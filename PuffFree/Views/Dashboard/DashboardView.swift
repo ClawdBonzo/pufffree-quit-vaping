@@ -146,7 +146,7 @@ struct DashboardView: View {
 
                         // ─── MOTIVATION + SAVINGS ─────────────────────────────
                         HStack(spacing: 12) {
-                            MotivationCardView()
+                            MotivationCardView(primaryMotivation: profile?.primaryMotivation)
                             SavingsHighlightCard(moneySaved: viewModel.moneySaved)
                         }
                         .padding(.horizontal, 16)
@@ -365,7 +365,7 @@ struct DashboardView: View {
                         if let next = PlayerLevel(rawValue: state.currentLevel.rawValue + 1) {
                             HStack {
                                 Spacer()
-                                Text("Next: \(next.title)  →  \(next.xpRequired) XP")
+                                Text("Next: \(next.localizedTitle)  →  \(next.xpRequired) XP")
                                     .font(.system(size: 9))
                                     .foregroundColor(PuffFreeTheme.textTertiary)
                                     .accessibilityHidden(true)
@@ -647,7 +647,7 @@ struct QuestPreviewRow: View {
             }
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(quest.type.rawValue)
+                Text(quest.type.displayName)
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)

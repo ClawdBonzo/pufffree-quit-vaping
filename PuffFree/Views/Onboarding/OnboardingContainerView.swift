@@ -110,6 +110,7 @@ struct OnboardingContainerView: View {
                 _ = await NotificationManager.shared.requestPermission()
                 NotificationManager.shared.scheduleDailyCheckInReminder()
                 NotificationManager.shared.scheduleMotivationalNotifications()
+                NotificationManager.shared.scheduleCravingSupportNotifications(motivation: primaryMotivation)
                 NotificationManager.shared.scheduleAllMilestoneNotifications(quitDate: quitDate)
             }
         }

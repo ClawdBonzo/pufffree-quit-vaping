@@ -27,3 +27,7 @@ extension MilestoneType {
 extension PlayerLevel {
     var localizedTitle: String { NSLocalizedString(title, comment: "Player level title") }
 }
+
+extension QuestType {
+    var displayName: String { NSLocalizedString(rawValue, comment: "Quest name") }
+}

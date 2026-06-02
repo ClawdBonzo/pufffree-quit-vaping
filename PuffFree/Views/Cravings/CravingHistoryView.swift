@@ -10,23 +10,18 @@ struct CravingHistoryView: View {
                 .foregroundColor(.white)
 
             if logs.isEmpty {
-                VStack(spacing: 8) {
-                    Image(systemName: "checkmark.shield.fill")
-                        .font(.largeTitle)
-                        .foregroundStyle(PuffFreeTheme.primaryGradient)
-                    Text("No cravings logged yet")
-                        .font(.subheadline)
-                        .foregroundColor(PuffFreeTheme.textSecondary)
-                    Text("That's a great sign! Log cravings when they happen.")
-                        .font(.caption)
-                        .foregroundColor(PuffFreeTheme.textTertiary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
+                MotivationalEmptyState(
+                    icon: "checkmark.shield.fill",
+                    title: "No cravings logged yet",
+                    message: "That's a great sign! When a craving hits, log it here — you'll see how often you win."
+                )
             } else {
-                ForEach(logs) { log in
-                    CravingLogRow(log: log)
+                // Lazily render and cap to the most recent entries — the history
+                // can grow unbounded, and eagerly laying out every row is wasteful.
+                LazyVStack(spacing: 12) {
+                    ForEach(logs.prefix(50)) { log in
+                        CravingLogRow(log: log)
+                    }
                 }
             }
         }

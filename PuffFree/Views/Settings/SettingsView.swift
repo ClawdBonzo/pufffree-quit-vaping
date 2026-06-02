@@ -145,10 +145,12 @@ struct SettingsView: View {
                 // Notifications
                 Section("Notifications") {
                     Button {
+                        let motivation = profile?.primaryMotivation ?? ""
                         Task {
                             _ = await NotificationManager.shared.requestPermission()
                             NotificationManager.shared.scheduleDailyCheckInReminder()
                             NotificationManager.shared.scheduleMotivationalNotifications()
+                            NotificationManager.shared.scheduleCravingSupportNotifications(motivation: motivation)
                         }
                     } label: {
                         Label("Re-enable Notifications", systemImage: "bell.fill")

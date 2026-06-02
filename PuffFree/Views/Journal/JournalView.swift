@@ -106,11 +106,12 @@ struct JournalView: View {
     @ViewBuilder
     private var journalContent: some View {
         if entries.isEmpty {
-            emptyState(
+            MotivationalEmptyState(
                 icon: "book.fill",
                 title: "Start Your Journal",
-                subtitle: "Write about your journey, track your thoughts, and celebrate wins."
+                message: "Write about your journey, track your thoughts, and celebrate wins."
             )
+            .padding(.top, 40)
         } else {
             LazyVStack(spacing: 12) {
                 ForEach(entries) { entry in
@@ -126,11 +127,12 @@ struct JournalView: View {
     @ViewBuilder
     private var checkInContent: some View {
         if checkIns.isEmpty {
-            emptyState(
+            MotivationalEmptyState(
                 icon: "checkmark.circle.fill",
                 title: "Daily Check-Ins",
-                subtitle: "Track your mood, energy, and progress every day."
+                message: "Track your mood, energy, and progress every day."
             )
+            .padding(.top, 40)
         } else {
             LazyVStack(spacing: 12) {
                 ForEach(checkIns) { checkIn in
@@ -143,22 +145,6 @@ struct JournalView: View {
         }
     }
 
-    private func emptyState(icon: String, title: String, subtitle: String) -> some View {
-        VStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 40))
-                .foregroundStyle(PuffFreeTheme.primaryGradient)
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.white)
-            Text(subtitle)
-                .font(.caption)
-                .foregroundColor(PuffFreeTheme.textSecondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 60)
-    }
 }
 
 struct JournalEntryRow: View {
@@ -200,6 +186,11 @@ struct JournalEntryRow: View {
         .padding()
         .background(PuffFreeTheme.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(entry.title.isEmpty
+            ? NSLocalizedString("Untitled", comment: "Journal entry") : entry.title)
+        .accessibilityValue("\(entry.mood.displayName), \(entry.timestamp.shortFormatted)")
+        .accessibilityHint(entry.body)
     }
 
     private func moodColor(_ mood: Mood) -> Color {
