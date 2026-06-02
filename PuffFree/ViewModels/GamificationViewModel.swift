@@ -58,11 +58,15 @@ class GamificationViewModel {
 
     // MARK: - Streak System
 
+    /// Result of the most recent streak update — lets views react (e.g. show a
+    /// "Streak Shield used" toast when a missed day was forgiven).
+    var lastStreakResult: StreakUpdateResult?
+
     func updateStreak(daysSinceQuit: Int) {
         guard let state = gamificationState else { return }
 
         let previousStreak = state.streakDays
-        state.updateStreak(daysSinceQuit: daysSinceQuit)
+        lastStreakResult = state.updateStreak(daysSinceQuit: daysSinceQuit)
 
         if state.streakDays > previousStreak {
             HapticManager.notification(.success)
@@ -75,6 +79,28 @@ class GamificationViewModel {
     func getStreakBonus() -> Double {
         guard let state = gamificationState else { return 1.0 }
         return state.streakMultiplier
+    }
+
+    var streakShieldCount: Int { gamificationState?.streakShields ?? 0 }
+
+    // MARK: - Daily Ritual (available to everyone, including the free tier)
+
+    /// Whether today's ritual affirmation has already been completed.
+    var isRitualDoneToday: Bool {
+        guard let last = gamificationState?.lastRitualDate else { return false }
+        return Calendar.current.isDateInToday(last)
+    }
+
+    /// A lightweight once-per-day action that affirms the commitment and grants a
+    /// small XP reward. Gives free users a concrete daily reason to open the app
+    /// and start building the habit loop (and seeing the Pro value).
+    @discardableResult
+    func completeDailyRitual() -> Bool {
+        guard let state = gamificationState, !isRitualDoneToday else { return false }
+        state.lastRitualDate = Date()
+        addXP(20, source: "Daily Ritual") // addXP persists the state
+        HapticManager.notification(.success)
+        return true
     }
 
     // MARK: - Quests

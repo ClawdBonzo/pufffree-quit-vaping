@@ -258,6 +258,22 @@
         }
       }
     },
+    "Affirm today and earn +20 XP.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bekräftige heute und verdiene +20 XP."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affirmez aujourd’hui et gagnez +20 XP."
+          }
+        }
+      }
+    },
     "After Meal": {
       "localizations": {
         "de": {
@@ -818,6 +834,38 @@
         }
       }
     },
+    "Daily Ritual": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tägliches Ritual"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rituel quotidien"
+          }
+        }
+      }
+    },
+    "Daily ritual complete": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tägliches Ritual erledigt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rituel quotidien terminé"
+          }
+        }
+      }
+    },
     "Days Smoke-Free": {
       "localizations": {
         "de": {
@@ -910,6 +958,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terminé"
+          }
+        }
+      }
+    },
+    "Done today ✓": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute erledigt ✓"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait aujourd’hui ✓"
           }
         }
       }
@@ -1262,6 +1326,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Comment vous sentez-vous ?"
+          }
+        }
+      }
+    },
+    "I'm still smoke-free today": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich bin heute noch rauchfrei"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je suis encore sans fumée aujourd’hui"
           }
         }
       }
@@ -2114,6 +2194,22 @@
         }
       }
     },
+    "See you tomorrow — your streak is safe.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bis morgen – deine Serie ist sicher."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À demain — votre série est protégée."
+          }
+        }
+      }
+    },
     "See your full health recovery timeline": {
       "localizations": {
         "de": {
@@ -2286,6 +2382,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restez motivé"
+          }
+        }
+      }
+    },
+    "Streak Shields": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serien-Schutzschilde"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boucliers de série"
           }
         }
       }
@@ -2558,6 +2670,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Débloquez votre"
+          }
+        }
+      }
+    },
+    "Unlock daily quests, insights & more with Pro": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schalte mit Pro tägliche Quests, Analysen & mehr frei"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquez les quêtes, analyses et plus avec Pro"
           }
         }
       }

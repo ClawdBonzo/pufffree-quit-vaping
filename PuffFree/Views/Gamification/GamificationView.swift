@@ -223,6 +223,7 @@ struct StreakView: View {
     let state: GamificationState
 
     var body: some View {
+        VStack(spacing: 12) {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
@@ -261,6 +262,25 @@ struct StreakView: View {
                 Text("\(String(format: "%.1f", state.streakMultiplier))x")
                     .font(.headline)
                     .foregroundColor(PuffFreeTheme.accentTeal)
+            }
+        }
+
+            if state.streakShields > 0 {
+                Divider().background(Color.white.opacity(0.08))
+                HStack(spacing: 6) {
+                    Image(systemName: "shield.lefthalf.filled")
+                        .font(.caption)
+                        .foregroundColor(PuffFreeTheme.accentTeal)
+                    Text("Streak Shields")
+                        .font(.caption)
+                        .foregroundColor(PuffFreeTheme.textSecondary)
+                    Spacer()
+                    Text("\(state.streakShields)")
+                        .font(.headline)
+                        .foregroundColor(PuffFreeTheme.accentTeal)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(state.streakShields) streak shields")
             }
         }
         .padding(16)

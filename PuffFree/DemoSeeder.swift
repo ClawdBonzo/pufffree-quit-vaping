@@ -108,6 +108,7 @@ enum DemoSeeder {
         gam.lastActiveDate = now
         gam.totalQuestsCompleted = 42
         gam.totalBadgesUnlocked = 7
+        gam.streakShields = 3
         context.insert(gam)
 
         let questTypes: [QuestType] = [.smokeFreeDay, .checkIn, .resistCravings, .journalEntry]

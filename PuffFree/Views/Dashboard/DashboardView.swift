@@ -87,45 +87,16 @@ struct DashboardView: View {
                             .padding(.horizontal, 16)
                         }
 
-                        // ─── TODAY'S QUESTS ───────────────────────────────────
-                        if subscriptionVM.isPro, let gamVM = gamificationViewModel {
-                            questsSection(gamVM: gamVM)
-                                .padding(.horizontal, 16)
-                                .offset(y: questsVisible ? 0 : 20)
-                                .opacity(questsVisible ? 1 : 0)
-                                .animation(.spring(response: 0.45, dampingFraction: 0.72).delay(0.18), value: questsVisible)
-                        } else if !subscriptionVM.isPro {
-                            Button { showProPaywall = true } label: {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "star.fill")
-                                        .font(.title3)
-                                        .foregroundColor(.yellow)
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Daily Quests")
-                                            .font(.subheadline).fontWeight(.semibold)
-                                            .foregroundColor(.white)
-                                        Text("Complete quests, earn XP, level up")
-                                            .font(.caption2)
-                                            .foregroundColor(PuffFreeTheme.textSecondary)
-                                    }
-                                    Spacer()
-                                    Text("PRO")
-                                        .font(.system(size: 9, weight: .black))
-                                        .foregroundColor(PuffFreeTheme.phoenixGold)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 3)
-                                        .background(PuffFreeTheme.phoenixGold.opacity(0.15))
-                                        .clipShape(Capsule())
+                        // ─── TODAY'S QUESTS (Pro) / DAILY RITUAL (free) ───────
+                        if let gamVM = gamificationViewModel {
+                            Group {
+                                if subscriptionVM.isPro {
+                                    questsSection(gamVM: gamVM)
+                                } else {
+                                    DailyRitualCard(viewModel: gamVM,
+                                                    onUpgrade: { showProPaywall = true })
                                 }
-                                .padding(14)
-                                .background(PuffFreeTheme.backgroundCard)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                                )
                             }
-                            .buttonStyle(.plain)
                             .padding(.horizontal, 16)
                             .offset(y: questsVisible ? 0 : 20)
                             .opacity(questsVisible ? 1 : 0)

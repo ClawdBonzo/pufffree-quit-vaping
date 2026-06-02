@@ -71,6 +71,14 @@ enum PlayerLevel: Int, Codable, CaseIterable {
     }
 }
 
+/// Outcome of a daily streak update — drives UI feedback (shield-used toast, etc.).
+enum StreakUpdateResult {
+    case counted    // already logged today
+    case extended   // streak grew
+    case shielded   // a missed day was forgiven by a Streak Shield
+    case reset      // streak broke
+}
+
 @Model
 final class GamificationState {
     var totalXP: Int
@@ -83,6 +91,12 @@ final class GamificationState {
     var totalQuestsCompleted: Int
     var totalBadgesUnlocked: Int
     var createdAt: Date
+    /// Streak Shields forgive a single missed day so one slip doesn't wipe out a
+    /// long streak. Earned as the streak grows; spent automatically on a miss.
+    /// Defaulted so SwiftData lightweight migration is safe on existing stores.
+    var streakShields: Int = 1
+    /// The last day the free "daily ritual" affirmation was completed.
+    var lastRitualDate: Date? = nil
 
     init() {
         self.totalXP = 0
@@ -95,6 +109,8 @@ final class GamificationState {
         self.totalQuestsCompleted = 0
         self.totalBadgesUnlocked = 0
         self.createdAt = Date()
+        self.streakShields = 1
+        self.lastRitualDate = nil
     }
 
     func addXP(_ amount: Int, from source: String) -> (leveledUp: Bool, newLevel: PlayerLevel?) {
@@ -117,7 +133,8 @@ final class GamificationState {
         return (leveledUp, newLevel)
     }
 
-    func updateStreak(daysSinceQuit: Int) {
+    @discardableResult
+    func updateStreak(daysSinceQuit: Int) -> StreakUpdateResult {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let lastActive = calendar.startOfDay(for: lastActiveDate)
@@ -126,20 +143,36 @@ final class GamificationState {
 
         if daysDiff == 0 {
             // Already counted today
-            return
+            return .counted
         } else if daysDiff == 1 {
             // Continued streak
-            streakDays += 1
-            streakMultiplier = 1.0 + (Double(streakDays) * 0.1)
-            if streakDays > bestStreak {
-                bestStreak = streakDays
-            }
+            extendStreak()
+            return .extended
+        } else if daysDiff == 2 && streakShields > 0 {
+            // Exactly one missed day — forgive it with a Streak Shield so a single
+            // slip doesn't erase weeks of progress (a known churn trigger).
+            streakShields -= 1
+            extendStreak()
+            return .shielded
         } else {
             // Streak broken, reset
             streakDays = 1
             streakMultiplier = 1.0
+            lastActiveDate = Date()
+            return .reset
         }
+    }
 
+    /// Advance the streak by a day, scale the multiplier, and award a Streak
+    /// Shield each time a new 7-day boundary is crossed (capped at 3 held).
+    private func extendStreak() {
+        let previous = streakDays
+        streakDays += 1
+        streakMultiplier = 1.0 + (Double(streakDays) * 0.1)
+        if streakDays > bestStreak { bestStreak = streakDays }
+        if streakDays / 7 > previous / 7 {
+            streakShields = min(streakShields + 1, 3)
+        }
         lastActiveDate = Date()
     }
 
