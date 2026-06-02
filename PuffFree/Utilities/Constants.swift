@@ -6,6 +6,13 @@ enum AppConstants {
     static let appGroupIdentifier = "group.com.pufffree.app"
     static let widgetKind = "PuffFreeWidget"
 
+    enum Legal {
+        // Functional links required for App Store Guideline 3.1.2 (auto-renewable
+        // subscriptions). Surfaced on the paywall and in the App Store metadata.
+        static let termsOfUseURL    = URL(string: "https://gwlabs.app/terms")!
+        static let privacyPolicyURL = URL(string: "https://gwlabs.app/privacy")!
+    }
+
     enum RevenueCat {
         // RevenueCat public SDK key.
         //   • DEBUG  → Test Store key (sandbox testing in the simulator/dev builds)

@@ -284,8 +284,29 @@ struct PaywallView: View {
                 .foregroundColor(.white.opacity(0.4))
                 .multilineTextAlignment(.center)
 
-            // Footer links
-            HStack(spacing: 0) {
+            // Auto-renew disclosure (App Store Guideline 3.1.2)
+            Text(autoRenewDisclosure)
+                .font(.system(size: 9))
+                .foregroundColor(.white.opacity(0.3))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            // Legal links (required by 3.1.2): Terms of Use · Privacy Policy
+            HStack(spacing: 6) {
+                Link(destination: AppConstants.Legal.termsOfUseURL) {
+                    Text("Terms of Use")
+                        .font(.system(size: 10)).foregroundColor(.white.opacity(0.5))
+                }
+                footerDot
+                Link(destination: AppConstants.Legal.privacyPolicyURL) {
+                    Text("Privacy Policy")
+                        .font(.system(size: 10)).foregroundColor(.white.opacity(0.5))
+                }
+            }
+            .padding(.top, 1)
+
+            // Restore · Maybe Later
+            HStack(spacing: 6) {
                 Button {
                     Task {
                         await viewModel.restore()
@@ -301,7 +322,7 @@ struct PaywallView: View {
                 .disabled(viewModel.isLoading)
 
                 if onDismiss != nil {
-                    Text("  ·  ").font(.system(size: 10)).foregroundColor(.white.opacity(0.25))
+                    footerDot
                     Button { onDismiss?() } label: {
                         Text("Maybe Later")
                             .font(.system(size: 10)).foregroundColor(.white.opacity(0.3))
@@ -343,6 +364,18 @@ struct PaywallView: View {
         case .lifetime: return "Get Lifetime Access"
         default:        return "Start Free Trial"
         }
+    }
+
+    private var footerDot: some View {
+        Text("·").font(.system(size: 10)).foregroundColor(.white.opacity(0.25))
+    }
+
+    // Auto-renew disclosure required by App Store Guideline 3.1.2.
+    private var autoRenewDisclosure: String {
+        guard let pkg = resolvedPackage(), pkg.packageType != .lifetime else {
+            return "One-time purchase charged to your Apple Account. No subscription, no auto-renewal."
+        }
+        return "Payment is charged to your Apple Account at confirmation of purchase. The subscription renews automatically at the same price unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your Apple Account settings."
     }
 
     private var trialTerms: String {
