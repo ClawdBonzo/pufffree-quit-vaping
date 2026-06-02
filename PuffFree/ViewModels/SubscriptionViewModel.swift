@@ -18,7 +18,12 @@ final class SubscriptionViewModel {
         async let proStatus = RevenueCatManager.shared.checkProStatus()
         currentOfferings = await offerings
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-SeedDemoData") {
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("-FreeTier") {
+            isPro = false  // force the free-tier experience for screenshots/QA
+            return
+        }
+        if args.contains("-SeedDemoData") {
             isPro = true   // demo mode: unlock Pro for App Store screenshots
             return
         }
