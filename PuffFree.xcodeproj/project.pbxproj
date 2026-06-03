@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		44F3D2212F85FD36006C6DE8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AA100081AAAA000000000001 /* RevenueCat */; };
+		90BFD746A5D67576B6B032A8 /* PuffFreeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEAD5D615FF46F9846979FA /* PuffFreeUITests.swift */; };
+		DDB639C9374BE7499526858D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494A7D6D790A527EC6FE2D73 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -17,6 +19,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = AA100020AAAA000000000001;
 			remoteInfo = PuffFreeWidgets;
+		};
+		EE0CC6F4364077086447D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA100001AAAA000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA100006AAAA000000000001;
+			remoteInfo = PuffFree;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -34,18 +43,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D702C179B0B7A5368D366E7 /* PuffFreeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PuffFreeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		494A7D6D790A527EC6FE2D73 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		AA100002AAAA000000000001 /* PuffFree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PuffFree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA100021AAAA000000000001 /* PuffFreeWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PuffFreeWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDEAD5D615FF46F9846979FA /* PuffFreeUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PuffFreeUITests.swift; path = PuffFreeUITests/PuffFreeUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AA100003AAAA000000000001 /* PuffFree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = PuffFree;
 			sourceTree = "<group>";
 		};
 		AA100040AAAA000000000001 /* PuffFreeWidgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = PuffFreeWidgets;
 			sourceTree = "<group>";
 		};
@@ -67,15 +83,49 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EAC2ED086139BC84DCDFE51E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DDB639C9374BE7499526858D /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D8B0765EE07E3B21052A604 /* PuffFreeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				DDEAD5D615FF46F9846979FA /* PuffFreeUITests.swift */,
+			);
+			name = PuffFreeUITests;
+			sourceTree = SOURCE_ROOT;
+		};
+		4CD48F30B2EB6664DF0E8E34 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				494A7D6D790A527EC6FE2D73 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		55BC462AB9116CB571A954FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4CD48F30B2EB6664DF0E8E34 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AA100000AAAA000000000001 = {
 			isa = PBXGroup;
 			children = (
 				AA100003AAAA000000000001 /* PuffFree */,
 				AA100040AAAA000000000001 /* PuffFreeWidgets */,
 				AA100005AAAA000000000001 /* Products */,
+				55BC462AB9116CB571A954FD /* Frameworks */,
+				3D8B0765EE07E3B21052A604 /* PuffFreeUITests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -84,6 +134,7 @@
 			children = (
 				AA100002AAAA000000000001 /* PuffFree.app */,
 				AA100021AAAA000000000001 /* PuffFreeWidgets.appex */,
+				0D702C179B0B7A5368D366E7 /* PuffFreeUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -91,6 +142,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		046012B9BFD83C6A452368E1 /* PuffFreeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DE47F1384452EBBB4E717F8 /* Build configuration list for PBXNativeTarget "PuffFreeUITests" */;
+			buildPhases = (
+				1893F4EDDF212E7D4A94877C /* Sources */,
+				EAC2ED086139BC84DCDFE51E /* Frameworks */,
+				EE7DAEDC1C4D57E62A6FDDF2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				108EE0EEB107720F03532BD3 /* PBXTargetDependency */,
+			);
+			name = PuffFreeUITests;
+			productName = PuffFreeUITests;
+			productReference = 0D702C179B0B7A5368D366E7 /* PuffFreeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		AA100006AAAA000000000001 /* PuffFree */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AA100007AAAA000000000001 /* Build configuration list for PBXNativeTarget "PuffFree" */;
@@ -132,8 +201,6 @@
 				AA100040AAAA000000000001 /* PuffFreeWidgets */,
 			);
 			name = PuffFreeWidgets;
-			packageProductDependencies = (
-			);
 			productName = PuffFreeWidgets;
 			productReference = AA100021AAAA000000000001 /* PuffFreeWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -148,6 +215,9 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					046012B9BFD83C6A452368E1 = {
+						TestTargetID = AA100006AAAA000000000001;
+					};
 					AA100006AAAA000000000001 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -177,6 +247,7 @@
 			targets = (
 				AA100006AAAA000000000001 /* PuffFree */,
 				AA100020AAAA000000000001 /* PuffFreeWidgets */,
+				046012B9BFD83C6A452368E1 /* PuffFreeUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -196,9 +267,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EE7DAEDC1C4D57E62A6FDDF2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1893F4EDDF212E7D4A94877C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90BFD746A5D67576B6B032A8 /* PuffFreeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA100008AAAA000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -216,6 +302,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		108EE0EEB107720F03532BD3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PuffFree;
+			target = AA100006AAAA000000000001 /* PuffFree */;
+			targetProxy = EE0CC6F4364077086447D205 /* PBXContainerItemProxy */;
+		};
 		AA100011AAAA000000000001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA100020AAAA000000000001 /* PuffFreeWidgets */;
@@ -224,6 +316,26 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		61E6689B2DF1A9AA61DB49C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3N9RY9EG8V;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawdbonzo.PuffFreeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = PuffFree;
+			};
+			name = Debug;
+		};
 		AA10000BAAAA000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -350,8 +462,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = PuffFree;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -371,7 +483,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -381,8 +493,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = PuffFree;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -402,7 +514,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -411,8 +523,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = PuffFreeWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -427,7 +539,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -436,8 +548,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = 3N9RY9EG8V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = PuffFreeWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -452,13 +564,43 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C062EAD845EA5BB41DEB851A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3N9RY9EG8V;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawdbonzo.PuffFreeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = PuffFree;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2DE47F1384452EBBB4E717F8 /* Build configuration list for PBXNativeTarget "PuffFreeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C062EAD845EA5BB41DEB851A /* Release */,
+				61E6689B2DF1A9AA61DB49C5 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AA100007AAAA000000000001 /* Build configuration list for PBXNativeTarget "PuffFree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -21,6 +21,8 @@ enum DemoSeeder {
         try? context.delete(model: JournalEntry.self)
         try? context.delete(model: DailyCheckIn.self)
         try? context.delete(model: MilestoneRecord.self)
+        try? context.delete(model: GamificationState.self)
+        try? context.delete(model: Quest.self)
 
         let cal = Calendar.current
         let now = Date()

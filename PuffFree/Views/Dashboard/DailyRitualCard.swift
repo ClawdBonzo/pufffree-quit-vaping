@@ -65,6 +65,7 @@ struct DailyRitualCard: View {
             }
             .buttonStyle(.plain)
             .disabled(done)
+            .accessibilityIdentifier("ritual_affirm_button")
 
             Button(action: onUpgrade) {
                 Text("Unlock daily quests, insights & more with Pro")
