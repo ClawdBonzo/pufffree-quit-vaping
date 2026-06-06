@@ -210,6 +210,22 @@
         }
       }
     },
+    "About this timeline": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über diese Timeline"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À propos de cette chronologie"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "de": {
@@ -1266,6 +1282,22 @@
         }
       }
     },
+    "Health Sources": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesundheitsquellen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources de santé"
+          }
+        }
+      }
+    },
     "Healthy Snack": {
       "localizations": {
         "de": {
@@ -1986,6 +2018,22 @@
         }
       }
     },
+    "Recovery timeline based on guidance from the CDC, NHS & WHO.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erholungs-Timeline basiert auf Leitlinien von CDC, NHS & WHO."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chronologie de récupération basée sur les recommandations du CDC, du NHS et de l’OMS."
+          }
+        }
+      }
+    },
     "Remaining": {
       "localizations": {
         "de": {
@@ -2350,6 +2398,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Situation sociale"
+          }
+        }
+      }
+    },
+    "Sources": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quellen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources"
           }
         }
       }
@@ -2750,6 +2814,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voir les badges"
+          }
+        }
+      }
+    },
+    "View sources & medical disclaimer": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quellen & medizinischen Hinweis ansehen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir les sources et l’avertissement médical"
           }
         }
       }

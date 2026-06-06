@@ -6,6 +6,7 @@ struct HealthTimelineView: View {
     @State private var viewModel = HealthViewModel()
     @Environment(\.subscriptionViewModel) private var subscriptionVM
     @State private var showPaywall = false
+    @State private var showSources = false
 
     private var profile: UserProfile? { profiles.first }
 
@@ -53,6 +54,11 @@ struct HealthTimelineView: View {
                     }
                     .padding(.horizontal, 16)
 
+                    // Citations (Guideline 1.4.1) — always reachable below the timeline.
+                    sourcesFooter
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+
                     Spacer().frame(height: 100)
                 }
                 .padding(.top, 8)
@@ -62,9 +68,21 @@ struct HealthTimelineView: View {
             .navigationTitle("Health Recovery")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button { showSources = true } label: {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(PuffFreeTheme.accentTeal)
+                    }
+                    .accessibilityLabel("Health information sources")
+                }
+            }
             .sheet(isPresented: $showPaywall) {
                 PaywallView(onDismiss: { showPaywall = false })
                     .environment(\.subscriptionViewModel, subscriptionVM)
+            }
+            .sheet(isPresented: $showSources) {
+                HealthSourcesView()
             }
         }
         .onAppear {
@@ -72,6 +90,27 @@ struct HealthTimelineView: View {
                 viewModel.update(hoursSinceQuit: profile.hoursSinceQuit)
             }
         }
+    }
+
+    private var sourcesFooter: some View {
+        Button { showSources = true } label: {
+            VStack(spacing: 6) {
+                Text("Recovery timeline based on guidance from the CDC, NHS & WHO.")
+                    .font(.caption2)
+                    .foregroundColor(PuffFreeTheme.textTertiary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 4) {
+                    Image(systemName: "info.circle")
+                    Text("View sources & medical disclaimer")
+                }
+                .font(.caption2.weight(.semibold))
+                .foregroundColor(PuffFreeTheme.accentTeal)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder

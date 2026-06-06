@@ -73,3 +73,4 @@ playground.xcworkspace
 *.orig
 *.log
 *.tmp
+.review_watch_state

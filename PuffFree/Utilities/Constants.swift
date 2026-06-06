@@ -13,6 +13,27 @@ enum AppConstants {
         static let privacyPolicyURL = URL(string: "https://gwlabs.app/privacy")!
     }
 
+    struct HealthSource: Identifiable {
+        let id = UUID()
+        let title: String
+        let url: URL
+    }
+
+    enum Health {
+        // Citations for the health-recovery timeline shown in the app, required by
+        // App Store Guideline 1.4.1 (medical/health information must cite sources).
+        // Surfaced via an always-visible info button + footer on the Health screen.
+        static let sources: [HealthSource] = [
+            HealthSource(title: "CDC — Benefits of Quitting Smoking",
+                         url: URL(string: "https://www.cdc.gov/tobacco/about/benefits-of-quitting.html")!),
+            HealthSource(title: "NHS — Quit Smoking",
+                         url: URL(string: "https://www.nhs.uk/live-well/quit-smoking/")!),
+            HealthSource(title: "WHO — Health Benefits of Smoking Cessation",
+                         url: URL(string: "https://www.who.int/news-room/questions-and-answers/item/tobacco-health-benefits-of-smoking-cessation")!)
+        ]
+        static let disclaimer = "PuffFree's health-recovery timeline is for general educational purposes and reflects widely published smoking-cessation guidance. It is not medical advice, and individual results vary. Consult a healthcare professional for advice specific to you."
+    }
+
     enum RevenueCat {
         // RevenueCat public SDK key.
         //   • DEBUG  → Test Store key (sandbox testing in the simulator/dev builds)
