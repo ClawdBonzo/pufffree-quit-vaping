@@ -42,32 +42,37 @@ struct PaywallView: View {
                             yRange: 20, duration: 7.0, startDelay: 1.0)
                     .offset(y: geo.size.height * 0.1)
 
-                // ── Content ─────────────────────────────────────────
-                VStack(spacing: 0) {
+                // ── Content (scrollable so it works on every screen size,
+                //    including iPhone apps run on iPad) ───────────────
+                ScrollView {
+                    VStack(spacing: 0) {
 
-                    // ── Header ──────────────────────────────────────
-                    paywallHeader(geo: geo)
+                        // ── Header ──────────────────────────────────
+                        paywallHeader(geo: geo)
 
-                    // ── Feature rows ────────────────────────────────
-                    featureList
-                        .padding(.horizontal, 24)
-                        .padding(.top, 14)
-                        .opacity(featsIn ? 1 : 0)
-                        .offset(y: featsIn ? 0 : 10)
-                        .animation(.spring(response: 0.45, dampingFraction: 0.75).delay(0.12), value: featsIn)
+                        // ── Feature rows ────────────────────────────
+                        featureList
+                            .padding(.horizontal, 24)
+                            .padding(.top, 14)
+                            .opacity(featsIn ? 1 : 0)
+                            .offset(y: featsIn ? 0 : 10)
+                            .animation(.spring(response: 0.45, dampingFraction: 0.75).delay(0.12), value: featsIn)
 
-                    // ── Plan cards ───────────────────────────────────
-                    plansSection
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        .opacity(plansIn ? 1 : 0)
-                        .offset(y: plansIn ? 0 : 14)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.72).delay(0.22), value: plansIn)
-
-                    Spacer(minLength: 0)
-
-                    // ── CTA ──────────────────────────────────────────
+                        // ── Plan cards ──────────────────────────────
+                        plansSection
+                            .padding(.horizontal, 20)
+                            .padding(.top, 16)
+                            .opacity(plansIn ? 1 : 0)
+                            .offset(y: plansIn ? 0 : 14)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.72).delay(0.22), value: plansIn)
+                    }
+                    .padding(.bottom, 16)
+                }
+                .scrollIndicators(.hidden)
+                // CTA + legal links stay pinned and always reachable.
+                .safeAreaInset(edge: .bottom, spacing: 0) {
                     ctaSection(geo: geo)
+                        .background(Color(hex: "060D12").opacity(0.97))
                 }
 
                 // ── Dismiss button ──────────────────────────────────
@@ -277,6 +282,7 @@ struct PaywallView: View {
                 .shadow(color: Color(hex: "0D9B6B").opacity(0.45), radius: 14, y: 5)
             }
             .disabled(viewModel.isLoading)
+            .accessibilityIdentifier("paywall_cta")
 
             // Trial terms
             Text(trialTerms)
@@ -331,6 +337,7 @@ struct PaywallView: View {
             }
         }
         .padding(.horizontal, 24)
+        .padding(.top, 12)
         .padding(.bottom, max(geo.safeAreaInsets.bottom, 12) + 4)
         .opacity(ctaIn ? 1 : 0)
         .offset(y: ctaIn ? 0 : 14)

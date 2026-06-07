@@ -30,4 +30,19 @@ final class PuffFreeUITests: XCTestCase {
         XCTAssertFalse(affirm.isEnabled,
                        "Ritual button should be disabled after completing today's ritual")
     }
+
+    /// Guards the Guideline 4 fix: the paywall's purchase button must be on-screen
+    /// and tappable on every device (it previously fell below the fold on iPad
+    /// because the screen didn't scroll).
+    func testPaywallPurchaseButtonIsReachable() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-SeedDemoData", "1", "-FreeTier", "1", "-Paywall", "1"]
+        app.launch()
+
+        let cta = app.buttons["paywall_cta"]
+        XCTAssertTrue(cta.waitForExistence(timeout: 15),
+                      "Paywall purchase button should be present")
+        XCTAssertTrue(cta.isHittable,
+                      "Paywall purchase button must be reachable (not below the fold) on this device")
+    }
 }
